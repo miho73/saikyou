@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "사이쿄",
+  "version": "1.0",
+  "description": "올클",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.sugang.snu.ac.kr/*",
+    "*://*.google.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.sugang.snu.ac.kr/*",
+        "*://*.google.com/*"
+      ],
+      "js": [
+        "src/main.tsx"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "service_worker": "src/core/background.ts",
+    "type": "module"
+  }
+}
