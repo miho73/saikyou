@@ -7,8 +7,7 @@ function PingCounter() {
   const [isPinging, setIsPinging] = useState<boolean>(false);
   const [RTTs, setRTTs] = useState<number[]>([]);
   const [expectedRTT, setExpectedRTT] = useState<number>(0);
-  const [succeedPings, setSucceedPings] = useState<number>(0);
-  const [failedPing, setFailedPing] = useState<number>(0);
+  const [successRate, setSuccessRate] = useState<number | null>(null);
   const portRef = useRef<chrome.runtime.Port | null>(null);
 
   function handleMessage(message: any) {
@@ -16,23 +15,21 @@ function PingCounter() {
       case Opcodes.OK: {
         if (message.for === Opcodes.START_PING) setIsPinging(true);
         else if (message.for === Opcodes.STOP_PING) setIsPinging(false);
-        else if(message.for === Opcodes.RESET_MEASUREMENT) {
+        else if(message.for === Opcodes.RESET) {
           setRTTs([]);
           setExpectedRTT(0);
-          setSucceedPings(0);
-          setFailedPing(0);
+          setSuccessRate(null);
         }
         break;
       }
       case Opcodes.ERROR: {
-        console.error("[PING] instruction " + message.for + " failed");
+        console.error("[PING] instruction " + message.for + " has failed");
         break;
       }
       case Opcodes.PING_RESULT: {
         setRTTs(message.data.rtt);
         setExpectedRTT(message.data.expectedRTT);
-        setSucceedPings(message.data.success);
-        setFailedPing(message.data.fail);
+        setSuccessRate(Math.round(message.data.success * 1000 / (message.data.success + message.data.fail))/10);
       }
     }
   }
@@ -40,7 +37,7 @@ function PingCounter() {
     if(!portRef.current) return;
 
     portRef.current.postMessage({
-      opcode: Opcodes.RESET_MEASUREMENT
+      opcode: Opcodes.RESET
     });
   }
   function stopMeasurement() {
@@ -85,8 +82,8 @@ function PingCounter() {
           className={"my-2"}
         />
         <div className={"flex items-center justify-between"}>
-          {succeedPings + failedPing > 0 && <p>예상: {expectedRTT} ms / 성공률 {Math.round(succeedPings * 1000 / (succeedPings + failedPing)) / 10}%</p>}
-          {succeedPings + failedPing == 0 && <p>데이터가 없습니다.</p>}
+          {successRate && <p>예상: {expectedRTT} ms / 성공률 {successRate}%</p>}
+          {!successRate && <p>데이터가 없습니다.</p>}
           <div className={"flex items-center justify-between gap-2"}>
             {isPinging && <button className={"px-2 py-0.5 cursor-pointer"} onClick={stopMeasurement}>측정 중단</button>}
             {!isPinging && <button className={"px-2 py-0.5 cursor-pointer"} onClick={beginMeasurement}>측정 시작</button>}

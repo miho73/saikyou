@@ -19,7 +19,7 @@ let expectedRTT: number = -1;
 
 let pingPort: chrome.runtime.Port;
 
-function setPort(port: chrome.runtime.Port) {
+function setChromeComPort(port: chrome.runtime.Port) {
   pingPort = port;
 
   pingPort.onMessage.addListener(handlePingMessage);
@@ -46,7 +46,7 @@ function handlePingMessage(msg: any) {
       });
       break;
     }
-    case Opcodes.RESET_MEASUREMENT: {
+    case Opcodes.RESET: {
       pingResults.length = 0;
       failedPings.length = 0;
       RTTs.length = 0;
@@ -133,8 +133,7 @@ function ping(): boolean {
     pingPort.postMessage({
       opcode: Opcodes.PING_RESULT,
       data: {
-        expectedRTT: Math.round(expectedRTT)  ,
-        ping: pingResults,
+        expectedRTT: Math.round(expectedRTT),
         rtt: RTTs,
         success: pingResults.length,
         fail: failedPings.length
@@ -153,4 +152,4 @@ function stopPing() {
   return false;
 }
 
-export default setPort;
+export default setChromeComPort;

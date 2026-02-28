@@ -10,7 +10,7 @@ fontLink.href = 'https://fonts.googleapis.com/css2?family=WDXL+Lubrifont+JP+N&fa
 document.head.appendChild(fontLink);
 
 const rootElement = document.createElement('div');
-rootElement.id = 'psikyo-root';
+rootElement.id = 'saikyou-root';
 document.body.appendChild(rootElement);
 
 const shadowRoot = rootElement.attachShadow({mode: 'open'});
@@ -20,7 +20,7 @@ styleElement.textContent = tailwindStyle;
 shadowRoot.appendChild(styleElement);
 
 const renderRoot = document.createElement('div');
-renderRoot.id = 'psikyo-render-root';
+renderRoot.id = 'saikyou-render-root';
 shadowRoot.appendChild(renderRoot);
 
 const root = createRoot(renderRoot);
