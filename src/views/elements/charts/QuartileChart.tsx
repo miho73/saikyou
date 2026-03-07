@@ -1,12 +1,13 @@
 interface QuartileChartProps {
   data: number[]; // MUST BE SORTED,
+  marker?: number[];
   whisker?: number;
   rangeCutoff?: number;
   className?: string;
 }
 
 function QuartileChart(
-  { data, whisker = 1.5, rangeCutoff = 10, className }: QuartileChartProps
+  { data, marker, whisker = 1.5, rangeCutoff = 10, className }: QuartileChartProps
 ) {
   if(!data || data.length === 0) {
     return (
@@ -54,6 +55,9 @@ function QuartileChart(
             return <circle key={`point-${i}`} cx={`${(d-axisMin) / axisRatio}%`} cy={20} r={2} className={"fill-green-300"}/>;
           }
         })}
+        { marker && marker.map((d, i) => (
+          <line x1={`${(d-axisMin) / axisRatio}%`} y1={1} x2={`${(d-axisMin) / axisRatio}%`} y2={13} strokeWidth={2} className={"stroke-blue-300"} strokeDasharray={"2 2"} />
+        ))}
         { ticks.map((i: number, idx: number) => (
           <text key={`tick-${i}`} x={`${idx / 11 * 100}%`} y={40} className={"fill-gray-100"}>{i}</text>
         ))}

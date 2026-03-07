@@ -1,6 +1,6 @@
 /// <reference types="chrome"/>
 
-import setChromeComPort from "./clock/clock";
+import setChromeComPort from "./ping/ping_sender";
 
 const Opcodes = {
   // general response/request opcodes
@@ -11,7 +11,7 @@ const Opcodes = {
   // ping=port channel
   START_CLOCK: 0x100,
   STOP_CLOCK: 0x101,
-  CLOCK: 0x102,
+  PING: 0x102,
 }
 
 // 전역 메시지 핸들러
@@ -32,7 +32,5 @@ chrome.runtime.onMessage.addListener(handleMessage);
 chrome.runtime.onConnect.addListener(port => {
   if (port.name === "ping-port") setChromeComPort(port);
 });
-
-//
 
 export default Opcodes;
