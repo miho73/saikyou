@@ -3,6 +3,8 @@ import PingCounter from "./PingCounter";
 import ServerClock from "./ServerClock";
 import Header from "./Header";
 import Footer from "./Footer";
+import Signal from "./Signal";
+import Clocks from "./Clocks";
 
 function App() {
   const [targetTime, setTargetTime] = useState<string>("12:00:00.000");
@@ -15,6 +17,8 @@ function App() {
       <hr className="my-1 border-gray-500"/>
       <main className={"flex flex-col gap-4 mb-3"}>
         <ServerClock/>
+        <Signal/>
+        <Clocks/>
         <PingCounter/>
       </main>
       <hr className="my-1 border-gray-500"/>

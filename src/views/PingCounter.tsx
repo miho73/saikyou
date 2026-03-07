@@ -1,6 +1,5 @@
-import {type ReactElement, useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import Opcodes from "../core/background";
-import Alert from "./elements/Alert";
 import QuartileChart from "./elements/charts/QuartileChart";
 
 function PingCounter() {
@@ -13,8 +12,8 @@ function PingCounter() {
   function handleMessage(message: any) {
     switch (message.opcode) {
       case Opcodes.OK: {
-        if (message.for === Opcodes.START_PING) setIsPinging(true);
-        else if (message.for === Opcodes.STOP_PING) setIsPinging(false);
+        if (message.for === Opcodes.START_CLOCK) setIsPinging(true);
+        else if (message.for === Opcodes.STOP_CLOCK) setIsPinging(false);
         else if(message.for === Opcodes.RESET) {
           setRTTs([]);
           setExpectedRTT(0);
@@ -23,10 +22,10 @@ function PingCounter() {
         break;
       }
       case Opcodes.ERROR: {
-        console.error("[PING] instruction " + message.for + " has failed");
+        console.error("[CLOCK] instruction " + message.for + " has failed");
         break;
       }
-      case Opcodes.PING_RESULT: {
+      case Opcodes.CLOCK: {
         setRTTs(message.data.rtt);
         setExpectedRTT(message.data.expectedRTT);
         setSuccessRate(Math.round(message.data.success * 1000 / (message.data.success + message.data.fail))/10);
@@ -44,14 +43,14 @@ function PingCounter() {
     if(!portRef.current) return;
 
     portRef.current.postMessage({
-      opcode: Opcodes.STOP_PING
+      opcode: Opcodes.STOP_CLOCK
     });
   }
   function beginMeasurement() {
     if(!portRef.current) return;
 
     portRef.current.postMessage({
-      opcode: Opcodes.START_PING
+      opcode: Opcodes.START_CLOCK
     });
   }
 
@@ -60,13 +59,15 @@ function PingCounter() {
     portRef.current = port;
 
     port.onMessage.addListener(handleMessage);
+    /* TODO: REMOVE BEFORE PRODUCTION
     port.postMessage({
       opcode: Opcodes.START_PING
     });
+     */
 
     return () => {
       port.postMessage({
-        opcode: Opcodes.STOP_PING
+        opcode: Opcodes.STOP_CLOCK
       });
       port.disconnect();
     }

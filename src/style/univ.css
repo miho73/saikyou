@@ -5,6 +5,6 @@
   --font-sans: 'Noto Sans KR', sans-serif;
 }
 
-#psikyo-render-root {
+#saikyou-render-root {
   @apply text-gray-100;
 }

@@ -1,4 +1,4 @@
-import Opcodes from "./background";
+import Opcodes from "../background";
 
 let pingInterval: (ReturnType<typeof setInterval> | null) = null;
 
@@ -30,15 +30,15 @@ function setChromeComPort(port: chrome.runtime.Port) {
 
 function handlePingMessage(msg: any) {
   switch (msg.opcode) {
-    case Opcodes.START_PING: {
-      const ok = ping();
+    case Opcodes.START_CLOCK: {
+      const ok = clock();
       pingPort.postMessage({
         opcode: ok ? Opcodes.OK : Opcodes.ERROR,
         for: msg.opcode
       });
       break
     }
-    case Opcodes.STOP_PING: {
+    case Opcodes.STOP_CLOCK: {
       const ok = stopPing();
       pingPort.postMessage({
         opcode: ok ? Opcodes.OK : Opcodes.ERROR,
@@ -64,7 +64,7 @@ function handlePingMessage(msg: any) {
   }
 }
 
-function ping(): boolean {
+function clock(): boolean {
   if (pingInterval) return false;
 
   pingInterval = setInterval(async () => {
@@ -72,7 +72,7 @@ function ping(): boolean {
     const controller = new AbortController();
 
     try {
-      // ping 전송
+      // clock 전송
       const res = await fetch(
         TARGET_URL,
         {
@@ -131,7 +131,7 @@ function ping(): boolean {
     }
 
     pingPort.postMessage({
-      opcode: Opcodes.PING_RESULT,
+      opcode: Opcodes.CLOCK,
       data: {
         expectedRTT: Math.round(expectedRTT),
         rtt: RTTs,
