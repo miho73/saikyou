@@ -6,13 +6,13 @@ interface RTTKalmanFilterResult {
 let x_hat: number = -1;
 let P: number = -1;
 
-const Q = 0.001; // 프로세스 노이즈 공분산
-const R = 1000; // 측정 노이즈 공분산
+const Q = 20 * 20; // 프로세스 노이즈 공분산
+const R = 150 * 150; // 측정 노이즈 공분산
 
 function next(rtt: number): RTTKalmanFilterResult {
   if(x_hat == -1) {
     x_hat = rtt;
-    P = 100;
+    P = 300;
   }
 
   // 예측

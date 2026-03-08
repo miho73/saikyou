@@ -7,7 +7,7 @@ function PingCounter() {
   const [isPinging, setIsPinging] = useState<boolean>(false);
   const [RTTs, setRTTs] = useState<number[]>([]);
   const [expectedRTT, setExpectedRTT] = useState<number>(0);
-  const [rttDev, setRttDev] = useState<number>(0);
+  const [rttDev, setRttDev] = useState<number>(-1);
   const [isReasonable, setIsReasonable] = useState<boolean>(true);
   const [successRate, setSuccessRate] = useState<number | null>(null);
   const portRef = useRef<chrome.runtime.Port | null>(null);
@@ -98,7 +98,11 @@ function PingCounter() {
 
   return (
     <div>
-      <p>RTT [ms]</p>
+      <div className="flex gap-2 items-center">
+        <p>RTT [ms]</p>
+        { rttDev > 2 && <p className={"text-amber-200"}>초기화중</p> }
+        { (rttDev > 0 && rttDev < 2) && <p className={"text-emerald-200"}>초기화 완료</p> }
+      </div>
       <QuartileChart
         data={RTTs}
         marker={[expectedRTT]}
@@ -112,17 +116,6 @@ function PingCounter() {
           {!isPinging && <button className={"px-2 py-0.5 cursor-pointer"} onClick={beginMeasurement}>측정 시작</button>}
           <button className={"px-2 py-0.5 cursor-pointer"} onClick={resetMeasurement}>측정 리셋</button>
         </div>
-      </div>
-      <div className={"flex gap-2 mt-2"}>
-        { !isReasonable &&
-          <Alert variant={"warning"} detail={"데이터가 충분히 모일떄까지 기다려주세요.\n이 경고가 지속되면 측정 리셋을 해주세요."}>예측 경고</Alert>
-        }
-        { (RTTs.length != 0 && RTTs[RTTs.length - 1]! > 1000) &&
-          <Alert variant={"error"} detail={"인터넷 여건을 개선하세요."}>속도 경고</Alert>
-        }
-        { (RTTs.length != 0 && (RTTs[length - 1]! - RTTs[0]!) > 1000) &&
-          <Alert variant={"error"} detail={"지연시간이 너무 가변적입니다.\n네트워크 여견이 바뀌였을 수 있으니 측정 리셋을 권장합니다."}>변동성 경고</Alert>
-        }
       </div>
     </div>
   )
