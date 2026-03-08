@@ -6,13 +6,15 @@ interface RTTKalmanFilterResult {
 let x_hat: number = -1;
 let P: number = -1;
 
-const Q = 20 * 20; // 프로세스 노이즈 공분산
-const R = 150 * 150; // 측정 노이즈 공분산
+const Q = 1;
+const R = 40;
 
-function next(rtt: number): RTTKalmanFilterResult {
+function next(rttExp: number): RTTKalmanFilterResult {
+  const rtt = Math.log(rttExp); // 로그칼만필터
+
   if(x_hat == -1) {
     x_hat = rtt;
-    P = 300;
+    P = 5.70378247466; // 초기 추정 오차 공분산 (ln 300)
   }
 
   // 예측
@@ -27,8 +29,8 @@ function next(rtt: number): RTTKalmanFilterResult {
   P = (1 - K) * P_minus;
 
   return {
-    rtt: Math.round(x_hat * 100) / 100,
-    dev: Math.round(Math.sqrt(P) * 100) / 100
+    rtt: Math.round(Math.exp(x_hat) * 100) / 100,
+    dev: Math.round(Math.exp(P/2) * 100) / 100
   };
 }
 
@@ -36,8 +38,8 @@ function currentEstimate(): RTTKalmanFilterResult | null {
   if(x_hat == -1) return null;
 
   return {
-    rtt: Math.round(x_hat * 100) / 100,
-    dev: Math.round(Math.sqrt(P) * 100) / 100
+    rtt: Math.round(Math.exp(x_hat) * 100) / 100,
+    dev: Math.round(Math.exp(P/2) * 100) / 100
   };
 }
 

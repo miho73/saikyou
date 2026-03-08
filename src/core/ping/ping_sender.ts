@@ -53,11 +53,12 @@ function handlePingMessage(msg: any) {
       failedPings = 0;
       RTTs.length = 0;
 
+      reset();
+
       pingPort.postMessage({
         opcode: Opcodes.OK,
         for: msg.opcode
       });
-      reset();
       break;
     }
     default: {
