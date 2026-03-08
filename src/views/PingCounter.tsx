@@ -98,11 +98,7 @@ function PingCounter() {
 
   return (
     <div>
-      <div className="flex gap-2 items-center">
-        <p>RTT [ms]</p>
-        { rttDev > 2 && <p className={"text-amber-200"}>초기화중</p> }
-        { (rttDev > 0 && rttDev < 2) && <p className={"text-emerald-200"}>초기화 완료</p> }
-      </div>
+      <p className={"text-lg font-medium"}>지연시간 측정</p>
       <QuartileChart
         data={RTTs}
         marker={[expectedRTT]}
@@ -110,7 +106,7 @@ function PingCounter() {
       />
       <div className={"flex items-center justify-between"}>
         {successRate && <p>예상: {expectedRTT} ms (σ = {rttDev}) / 성공률 {successRate}%</p>}
-        {!successRate && <p>데이터가 없음</p>}
+        {!successRate && <p>데이터 없음</p>}
         <div className={"flex items-center justify-between gap-2"}>
           {isPinging && <button className={"px-2 py-0.5 cursor-pointer"} onClick={stopMeasurement}>측정 중단</button>}
           {!isPinging && <button className={"px-2 py-0.5 cursor-pointer"} onClick={beginMeasurement}>측정 시작</button>}

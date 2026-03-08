@@ -1,7 +1,8 @@
 function Footer() {
   return (
-    <footer>
-      <p className={"text-gray-300"}>Latency: m=30, σ=15 / Δ: 020</p>
+    <footer className={"flex items-center gap-x-3"}>
+      <p className={"text-gray-300"}>さいきょう SNUv1.0.0</p>
+      <a className={"hover:underline cursor-pointer"} target={"_blank"} href={"https://github.com/miho73/saikyou"}>Github</a>
     </footer>
   )
 }

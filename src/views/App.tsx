@@ -5,6 +5,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import Signal from "./Signal";
 import Clocks from "./Clocks";
+import RequestCanon from "./Canon";
 
 function App() {
   const [targetTime, setTargetTime] = useState<string>("12:00:00.000");
@@ -20,6 +21,7 @@ function App() {
         <Signal/>
         <Clocks/>
         <PingCounter/>
+        <RequestCanon/>
       </main>
       <hr className="my-1 border-gray-500"/>
       <Footer/>
