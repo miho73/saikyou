@@ -1,6 +1,6 @@
 /// <reference types="chrome"/>
 
-import setChromeComPort from "./ping/ping_sender";
+import setChromeComPort from "./ping/PingSender";
 
 const Opcodes = {
   // general response/request opcodes

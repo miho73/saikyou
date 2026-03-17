@@ -2,6 +2,8 @@ import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 import App from "./views/App";
 import tailwindStyle from "./style/univ.css?inline";
+import {Provider} from "react-redux";
+import store from "./core/redux/RootReducer";
 
 // 폰트는 Shadow DOM에 상속되므로 document.head에 로드
 const fontLink = document.createElement('link');
@@ -26,6 +28,8 @@ shadowRoot.appendChild(renderRoot);
 const root = createRoot(renderRoot);
 root.render(
   <StrictMode>
-    <App/>
+    <Provider store={store}>
+      <App/>
+    </Provider>
   </StrictMode>
 );

@@ -1,7 +1,7 @@
 {
   "name": "saikyou",
   "version": "1.0.0",
-  "description": "올클",
+  "description": "최강",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build"
@@ -21,10 +21,13 @@
     "vite": "^7.3.1"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.11.2",
     "@tailwindcss/vite": "^4.2.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-redux": "^9.2.0",
+    "recharts": "^3.8.0",
+    "redux": "^5.0.1",
     "vite-plugin-svgr": "^4.5.0"
   }
 }

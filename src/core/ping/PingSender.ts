@@ -1,23 +1,18 @@
 import Opcodes from "../background";
-import {next, currentEstimate, type KalmanFilterResult, reset} from "./kalman-filter";
-import {isOutlier} from "./quartile-filter";
-
-let pingInterval: (ReturnType<typeof setInterval> | null) = null;
-
-const TARGET_URL = "https://google.com";
+import {next, reset, stat} from "./PingRecorder";
 
 interface PingResult {
   rtt: number;
   success: boolean;
 }
 
-const MAX_RTT_HISTORY = 30;
-
-const pingResults: PingResult[] = []; // 최근 30개의 모든 ping 기록
-let RTTs: number[] = []; // 최근 30개 핑 중 성공한 RTT 시간을 정렬해서 저장
-let failedPings: number = 0; // 최근 30번 ping 중 실패한 횟수
-
+const TARGET_URL = "https://google.com";
+let pingInterval: (ReturnType<typeof setInterval> | null) = null;
 let pingPort: chrome.runtime.Port;
+
+const RTTs: number[] = [];
+const pings: PingResult[] = [];
+let failedPings = 0;
 
 // 연락 채널 설정
 function setChromeComPort(port: chrome.runtime.Port) {
@@ -33,7 +28,7 @@ function setChromeComPort(port: chrome.runtime.Port) {
 function handlePingMessage(msg: any) {
   switch (msg.opcode) {
     case Opcodes.START_CLOCK: {
-      const ok = ping_sender();
+      const ok = pingSender();
       pingPort.postMessage({
         opcode: ok ? Opcodes.OK : Opcodes.ERROR,
         for: msg.opcode
@@ -49,10 +44,9 @@ function handlePingMessage(msg: any) {
       break;
     }
     case Opcodes.RESET: {
-      pingResults.length = 0;
-      failedPings = 0;
       RTTs.length = 0;
-
+      pings.length = 0;
+      failedPings = 0;
       reset();
 
       pingPort.postMessage({
@@ -68,22 +62,22 @@ function handlePingMessage(msg: any) {
 }
 
 // 핑 전송
-function ping_sender(): boolean {
+function pingSender(): boolean {
   if (pingInterval) return false;
 
   pingInterval = setInterval(async () => {
     const beginMark = performance.now();
     const controller = new AbortController();
 
-    // 30개 이상 기록 있으면 pop
-    if(pingResults.length > MAX_RTT_HISTORY) {
-      const removed = pingResults.shift()!;
-      if(removed.success) {
-        const removedRTT = removed.rtt;
-        const idx = RTTs.findIndex(rtt => rtt === removedRTT);
-        if(idx !== -1) RTTs.splice(idx, 1);
+    if(pings.length > 60) {
+      const oldest_ping = pings.shift()!;
+      if(oldest_ping.success) {
+        const idx = RTTs.indexOf(oldest_ping.rtt);
+        if(idx > -1) RTTs.splice(idx, 1);
       }
-      else failedPings--;
+      else {
+        failedPings--;
+      }
     }
 
     try {
@@ -101,7 +95,7 @@ function ping_sender(): boolean {
       controller.abort();
 
       // 성공 기록 추가
-      pingResults.push({
+      pings.push({
         rtt: rtt,
         success: true
       });
@@ -120,53 +114,43 @@ function ping_sender(): boolean {
       }
       RTTs.splice(left, 0, rtt);
 
-      let estimatedRTT: KalmanFilterResult | null;
-
-      // 아웃라이어가 아니면 칼만필터에 삽입
-      if(!isOutlier(rtt))
-        estimatedRTT = next(rtt);
-      else
-        estimatedRTT = currentEstimate();
+      // 통계처리
+      next(rtt);
+      const s = stat();
 
       // 결과 전송
       pingPort.postMessage({
         opcode: Opcodes.PING,
         data: {
           rtt: RTTs,
-          estimate: (
-            estimatedRTT ? {
-              rtt: estimatedRTT.rtt,
-              dev: estimatedRTT.dev,
-            } : null
-          ),
-          success: RTTs.length,
+          stat: {
+            mean: s.mean,
+            stddev: s.stddev,
+          },
           fail: failedPings
         }
       });
     } catch (e) {
       console.error("Ping failed: ", e);
-      failedPings++;
 
       // 실패 기록 추가
-      pingResults.push({
+      pings.push({
         rtt: -1,
         success: false
       });
+      failedPings++;
 
       // 이전 추정 기록 전송
-      const currentEstimateResult = currentEstimate();
+      const s = stat();
 
       pingPort.postMessage({
         opcode: Opcodes.PING,
         data: {
           rtt: RTTs,
-          estimate: (
-            currentEstimateResult ? {
-              rtt: currentEstimateResult.rtt,
-              dev: currentEstimateResult.dev,
-            } : null
-          ),
-          success: RTTs.length,
+          stat: {
+            mean: s.mean,
+            stddev: s.stddev,
+          },
           fail: failedPings
         }
       });

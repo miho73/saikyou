@@ -1,7 +1,6 @@
 import {getTimeFromTimeNow} from "../core/clock/server_time";
 import {useEffect, useState} from "react";
 import {ArrowClockwise} from "../assets/symbol/svg";
-import {reset} from "../core/ping/kalman-filter";
 
 function dateToTimeString(date: Date | null): string {
   if(!date) return "--:--:--.---";

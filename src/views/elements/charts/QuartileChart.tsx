@@ -17,8 +17,6 @@ function QuartileChart(
     );
   }
 
-  console.log(data);
-
   const min = data[0]!;
   const max = data[data.length - 1]!;
   const q1 = data[Math.floor(data.length * 0.25)]!;
@@ -31,18 +29,12 @@ function QuartileChart(
   const axisMax = Math.ceil(right_whisker / rangeCutoff) * rangeCutoff;
   const axisMin = Math.floor(left_whisker / rangeCutoff) * rangeCutoff;
 
-  console.log(axisMax, axisMin);
-
   const tickStep = Math.ceil((axisMax - axisMin) / rangeCutoff / 10) * rangeCutoff;
   const axisRange = tickStep * 10;
   const axisRatio = axisRange / 100;
   const ticks = Array.from({
     length: 11,
   }, (_, i) => axisMin + i * tickStep);
-
-  console.log(tickStep, axisRange, axisRatio, ticks);
-
-  console.log("---------------------------------------------");
 
   return (
     <div className={"w-full p-1 flex items-center gap-2" + (className ? " " + className : "")}>

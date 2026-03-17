@@ -1,15 +1,20 @@
 import {useEffect, useRef, useState} from "react";
-import Opcodes from "../core/background";
-import QuartileChart from "./elements/charts/QuartileChart";
-import Alert from "./elements/Alert";
+import Opcodes from "../../core/background";
+import QuartileChart from "../elements/charts/QuartileChart";
+import Alert from "../elements/Alert";
+import {useAppDispatch, useAppSelector} from "../../core/hook/ReduxHooks";
+import {pingStatisticsAction} from "../../core/redux/PingStatisticsReducer";
 
-function PingCounter() {
+function PingStatistics() {
   const [isPinging, setIsPinging] = useState<boolean>(false);
   const [RTTs, setRTTs] = useState<number[]>([]);
-  const [expectedRTT, setExpectedRTT] = useState<number>(0);
-  const [rttDev, setRttDev] = useState<number>(-1);
   const [successRate, setSuccessRate] = useState<number | null>(null);
   const portRef = useRef<chrome.runtime.Port | null>(null);
+
+  const meanRTT = useAppSelector(state => state.PingStatisticsReducer.mean);
+  const stddevRTT = useAppSelector(state => state.PingStatisticsReducer.stddev);
+
+  const dispatch = useAppDispatch();
 
   // client측 메세지 핸들러
   function handleMessage(message: any) {
@@ -19,7 +24,10 @@ function PingCounter() {
         else if (message.for === Opcodes.STOP_CLOCK) setIsPinging(false);
         else if(message.for === Opcodes.RESET) {
           setRTTs([]);
-          setExpectedRTT(0);
+          dispatch(pingStatisticsAction.update({
+            mean: 0,
+            stddev: 0,
+          }));
           setSuccessRate(null);
         }
         break;
@@ -29,17 +37,22 @@ function PingCounter() {
         break;
       }
       case Opcodes.PING: {
+        const success = message.data.rtt.length;
+        const fails = message.data.fail;
+
         setRTTs(message.data.rtt);
-        setSuccessRate(Math.round(message.data.success * 1000 / (message.data.success + message.data.fail))/10);
+        setSuccessRate(Math.round(success * 1000 / (fails + success))/10);
 
-        const estimate: {
-          rtt: number;
-          dev: number;
-        } | null = message.data.estimate;
+        const stat: {
+          mean: number;
+          stddev: number;
+        } = message.data.stat;
 
-        if(estimate) {
-          setExpectedRTT(estimate.rtt);
-          setRttDev(estimate.dev);
+        if(stat) {
+          dispatch(pingStatisticsAction.update({
+            mean: stat.mean,
+            stddev: stat.stddev,
+          }));
         }
       }
     }
@@ -49,8 +62,10 @@ function PingCounter() {
     if(!portRef.current) return;
 
     setRTTs([]);
-    setExpectedRTT(0);
-    setRttDev(0);
+    dispatch(pingStatisticsAction.update({
+      mean: 0,
+      stddev: 0,
+    }));
     setSuccessRate(null);
 
     portRef.current.postMessage({
@@ -79,11 +94,9 @@ function PingCounter() {
     portRef.current = port;
 
     port.onMessage.addListener(handleMessage);
-    /* TODO: REMOVE BEFORE PRODUCTION
     port.postMessage({
-      opcode: Opcodes.START_PING
+      opcode: Opcodes.START_CLOCK
     });
-     */
 
     return () => {
       port.postMessage({
@@ -93,20 +106,20 @@ function PingCounter() {
     }
   }, []);
 
-  const mu  = Math.exp(expectedRTT);
-  const upper95 = Math.exp(expectedRTT + 1.96 * rttDev);
-  const lower95 = Math.exp(expectedRTT - 1.96 * rttDev);
+  const mu  = Math.exp(meanRTT);
+  const upper95 = Math.exp(meanRTT + 1.96 * stddevRTT);
+  const lower95 = Math.exp(meanRTT - 1.96 * stddevRTT);
 
   return (
     <div>
-      <p className={"text-lg font-medium"}>지연시간 측정</p>
+      <p className={"text-lg font-medium"}>지연시간 통계</p>
       <QuartileChart
         data={RTTs}
         marker={[mu]}
         className={"my-2"}
       />
       <div className={"flex items-center justify-between"}>
-        {successRate && <p>예상: {Math.round(mu * 100) / 100} ms, 95%: [{Math.round(lower95*100)/100}, {Math.round(upper95*100)/100}] / 성공률 {successRate}%</p>}
+        {successRate && <p>평균: {Math.round(mu * 100) / 100} ms, 95%: [{Math.round(lower95*100)/100}, {Math.round(upper95*100)/100}] / 성공률 {successRate}%</p>}
         {!successRate && <p>데이터 없음</p>}
         <div className={"flex items-center justify-between gap-2"}>
           {isPinging && <button className={"px-2 py-0.5 cursor-pointer"} onClick={stopMeasurement}>측정 중단</button>}
@@ -118,4 +131,4 @@ function PingCounter() {
   )
 }
 
-export default PingCounter;
+export default PingStatistics;
