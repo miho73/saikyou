@@ -8,7 +8,6 @@ function PingCounter() {
   const [RTTs, setRTTs] = useState<number[]>([]);
   const [expectedRTT, setExpectedRTT] = useState<number>(0);
   const [rttDev, setRttDev] = useState<number>(-1);
-  const [isReasonable, setIsReasonable] = useState<boolean>(true);
   const [successRate, setSuccessRate] = useState<number | null>(null);
   const portRef = useRef<chrome.runtime.Port | null>(null);
 
@@ -36,13 +35,11 @@ function PingCounter() {
         const estimate: {
           rtt: number;
           dev: number;
-          ok: boolean;
         } | null = message.data.estimate;
 
         if(estimate) {
           setExpectedRTT(estimate.rtt);
           setRttDev(estimate.dev);
-          setIsReasonable(estimate.ok);
         }
       }
     }
@@ -96,16 +93,20 @@ function PingCounter() {
     }
   }, []);
 
+  const mu  = Math.exp(expectedRTT);
+  const upper95 = Math.exp(expectedRTT + 1.96 * rttDev);
+  const lower95 = Math.exp(expectedRTT - 1.96 * rttDev);
+
   return (
     <div>
       <p className={"text-lg font-medium"}>지연시간 측정</p>
       <QuartileChart
         data={RTTs}
-        marker={[expectedRTT]}
+        marker={[mu]}
         className={"my-2"}
       />
       <div className={"flex items-center justify-between"}>
-        {successRate && <p>예상: {expectedRTT} ms (σ = {rttDev}) / 성공률 {successRate}%</p>}
+        {successRate && <p>예상: {Math.round(mu * 100) / 100} ms, 95%: [{Math.round(lower95*100)/100}, {Math.round(upper95*100)/100}] / 성공률 {successRate}%</p>}
         {!successRate && <p>데이터 없음</p>}
         <div className={"flex items-center justify-between gap-2"}>
           {isPinging && <button className={"px-2 py-0.5 cursor-pointer"} onClick={stopMeasurement}>측정 중단</button>}

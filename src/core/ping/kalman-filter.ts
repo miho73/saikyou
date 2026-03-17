@@ -1,4 +1,4 @@
-interface RTTKalmanFilterResult {
+interface RTTLogKalmanFilterResult {
   rtt: number;
   dev: number;
 }
@@ -7,14 +7,14 @@ let x_hat: number = -1;
 let P: number = -1;
 
 const Q = 1;
-const R = 40;
+const R = 4.7;
 
-function next(rttExp: number): RTTKalmanFilterResult {
+function next(rttExp: number): RTTLogKalmanFilterResult {
   const rtt = Math.log(rttExp); // 로그칼만필터
 
   if(x_hat == -1) {
     x_hat = rtt;
-    P = 5.70378247466; // 초기 추정 오차 공분산 (ln 300)
+    P = 6;
   }
 
   // 예측
@@ -29,17 +29,17 @@ function next(rttExp: number): RTTKalmanFilterResult {
   P = (1 - K) * P_minus;
 
   return {
-    rtt: Math.round(Math.exp(x_hat) * 100) / 100,
-    dev: Math.round(Math.exp(P/2) * 100) / 100
+    rtt: x_hat,
+    dev: Math.sqrt(P)
   };
 }
 
-function currentEstimate(): RTTKalmanFilterResult | null {
+function currentEstimate(): RTTLogKalmanFilterResult | null {
   if(x_hat == -1) return null;
 
   return {
-    rtt: Math.round(Math.exp(x_hat) * 100) / 100,
-    dev: Math.round(Math.exp(P/2) * 100) / 100
+    rtt: x_hat,
+    dev: Math.sqrt(P)
   };
 }
 
@@ -48,7 +48,7 @@ function reset() {
   P = -1;
 }
 
-export type KalmanFilterResult = RTTKalmanFilterResult;
+export type KalmanFilterResult = RTTLogKalmanFilterResult;
 
 export {
   next, reset,

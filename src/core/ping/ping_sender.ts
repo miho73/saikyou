@@ -1,6 +1,6 @@
 import Opcodes from "../background";
 import {next, currentEstimate, type KalmanFilterResult, reset} from "./kalman-filter";
-import {isOutlier, isReasonableEstimate} from "./quartile-filter";
+import {isOutlier} from "./quartile-filter";
 
 let pingInterval: (ReturnType<typeof setInterval> | null) = null;
 
@@ -128,8 +128,6 @@ function ping_sender(): boolean {
       else
         estimatedRTT = currentEstimate();
 
-      const isThisOK: boolean | null = estimatedRTT ? isReasonableEstimate(estimatedRTT.rtt, estimatedRTT.dev) : null;
-
       // 결과 전송
       pingPort.postMessage({
         opcode: Opcodes.PING,
@@ -139,7 +137,6 @@ function ping_sender(): boolean {
             estimatedRTT ? {
               rtt: estimatedRTT.rtt,
               dev: estimatedRTT.dev,
-              ok: isThisOK
             } : null
           ),
           success: RTTs.length,
@@ -158,7 +155,6 @@ function ping_sender(): boolean {
 
       // 이전 추정 기록 전송
       const currentEstimateResult = currentEstimate();
-      const isThisOK: boolean | null = currentEstimateResult ? isReasonableEstimate(currentEstimateResult.rtt, currentEstimateResult.dev) : null;
 
       pingPort.postMessage({
         opcode: Opcodes.PING,
@@ -168,7 +164,6 @@ function ping_sender(): boolean {
             currentEstimateResult ? {
               rtt: currentEstimateResult.rtt,
               dev: currentEstimateResult.dev,
-              ok: isThisOK
             } : null
           ),
           success: RTTs.length,
