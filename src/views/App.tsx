@@ -1,6 +1,6 @@
 import {useState} from "react";
 import PingStatistics from "./menu/PingStatistics";
-import ServerClock from "./ServerClock";
+import TimeClock from "./TimeClock";
 import Header from "./elements/layout/Header";
 import Footer from "./elements/layout/Footer";
 import Clocks from "./Clocks";
@@ -17,7 +17,7 @@ function App() {
       <Header/>
       <hr className="my-1 border-gray-500"/>
       <main className={"flex flex-col gap-4 mb-3"}>
-        <ServerClock/>
+        <TimeClock/>
         <Clocks/>
         <PingStatistics/>
         <RTTDistributionVisualizer/>
