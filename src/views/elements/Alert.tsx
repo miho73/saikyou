@@ -7,10 +7,10 @@ interface AlertProps {
 }
 
 const variantClasses: Record<AlertProps["variant"], string> = {
-  success: "bg-green-800 text-green-100",
-  error: "bg-red-800 text-red-100",
-  warning: "bg-yellow-800 text-yellow-100",
-  info: "bg-blue-800 text-blue-100",
+  success: "bg-green-700 text-green-100",
+  error: "bg-red-700 text-red-100",
+  warning: "bg-yellow-700 text-yellow-100",
+  info: "bg-blue-700 text-blue-100",
 };
 
 function Alert(
@@ -18,7 +18,7 @@ function Alert(
 ) {
   return (
     <span
-      className={"px-3 py-0.5 rounded-full " + variantClasses[variant]}
+      className={"px-4 py-1.5 rounded-full " + variantClasses[variant]}
       title={detail}
     >
       {children}

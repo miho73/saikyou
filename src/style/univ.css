@@ -5,6 +5,10 @@
   --font-sans: 'Noto Sans KR', sans-serif;
 }
 
+* {
+  -webkit-appearance: none;
+}
+
 #saikyou-render-root {
   @apply text-gray-100;
 }

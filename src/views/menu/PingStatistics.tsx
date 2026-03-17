@@ -119,7 +119,7 @@ function PingStatistics() {
         className={"my-2"}
       />
       <div className={"flex items-center justify-between"}>
-        {successRate && <p>평균: {Math.round(mu * 100) / 100} ms, 95%: [{Math.round(lower95*100)/100}, {Math.round(upper95*100)/100}] / 성공률 {successRate}%</p>}
+        {successRate && <p>평균: {Math.round(mu * 100) / 100} ms, 95%: {Math.round(lower95*100)/100} / 성공률 {successRate}%</p>}
         {!successRate && <p>데이터 없음</p>}
         <div className={"flex items-center justify-between gap-2"}>
           {isPinging && <button className={"px-2 py-0.5 cursor-pointer"} onClick={stopMeasurement}>측정 중단</button>}

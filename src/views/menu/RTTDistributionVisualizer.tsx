@@ -1,4 +1,3 @@
-import {RTTNormalDistEqn} from "../../assets/symbol/svg";
 import {useMemo, useState} from "react";
 import {
   Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip,
@@ -6,6 +5,7 @@ import {
 } from "recharts";
 import {useAppDispatch, useAppSelector} from "../../core/hook/ReduxHooks";
 import {pingStatisticsAction} from "../../core/redux/PingStatisticsReducer";
+import Alert from "../elements/Alert";
 
 function erf(x: number) {
   const sign = x < 0 ? -1 : 1;
@@ -96,20 +96,6 @@ function RTTDistributionVisualizer() {
   return (
     <div className="flex flex-col gap-y-2">
       <p className={"text-lg font-medium"}>지연시간 분포</p>
-      <div className={"flex gap-2 items-center"}>
-        <RTTNormalDistEqn className={"fill-gray-100 h-6 pl-2"} />
-        <input
-          type={"number"}
-          min={0}
-          max={3}
-          step={0.1}
-          value={sigmaN}
-          onChange={e => dispatch(
-            pingStatisticsAction.setZ(Number(e.target.value))
-          )}
-          className={"w-16 bg-gray-800 text-gray-100 px-1 py-0.5 outline-none hover:bg-gray-700 focus:bg-gray-700 transition-all duration-150"}
-        />
-      </div>
 
       <div className={"outline-none"}>
         <ResponsiveContainer
@@ -159,10 +145,10 @@ function RTTDistributionVisualizer() {
             <ReferenceLine
               className={"text-gray-100"}
               x={ttime}
-              stroke="red"
+              stroke="var(--color-red-300)"
               strokeDasharray="3 3"
               label={{
-                value: "자동 시작 시각",
+                value: Math.round(ttime) + " ms",
                 fill: "var(--color-gray-100)",
                 position: "center",
               }}
@@ -188,8 +174,39 @@ function RTTDistributionVisualizer() {
             />
           </AreaChart>
         </ResponsiveContainer>
-        <p>지연시간: {Math.round(ttime)}, 확률: {Math.round(probabilities * 1000)/10}%</p>
+        <p>정시 전 도착 가능성: {Math.round((1-probabilities) * 1000)/10}%</p>
       </div>
+
+      <div className={"flex gap-2 items-center relative"}>
+        <input
+          type={"range"}
+          min={0} max={3} step={0.05}
+          value={sigmaN}
+          onChange={e => dispatch(
+            pingStatisticsAction.setZ(Number(e.target.value))
+          )}
+          className={"w-full h-5 outline-none rounded-full appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-gray-100/90 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full"}
+          style={{
+            background: "linear-gradient(to left in oklch, var(--color-emerald-600) 0%, var(--color-amber-500) 85%, var(--color-rose-600) 100%)",
+          }}
+        />
+        <input
+          type={"number"}
+          min={0}
+          max={3}
+          step={0.1}
+          value={sigmaN}
+          onChange={e => dispatch(
+            pingStatisticsAction.setZ(Number(e.target.value))
+          )}
+          className={"w-16 bg-gray-800 text-gray-100 px-1 py-0.5 outline-none hover:bg-gray-700 focus:bg-gray-700 transition-all duration-150"}
+        />
+      </div>
+      {sigmaN < 1.5 &&
+        <Alert variant={"warning"}>
+          수강신청이 정시보다 일찍 시작될 수 있습니다.
+        </Alert>
+      }
     </div>
   );
 }
