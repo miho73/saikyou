@@ -27,7 +27,7 @@ jobs:
         working-directory: ./idol
         run: |
           docker build \
-          -t ghcr.io/miho73/saikyou:$SHA \
+          -t ghcr.io/miho73/idol:$SHA \
           --build-arg APP_COMMIT=$SHA \
           .
       - name: Docker login
