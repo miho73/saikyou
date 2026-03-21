@@ -1,6 +1,7 @@
-import {getTimeFromTimeNow} from "../core/clock/server_time";
+import {getTimeFromTimeNow} from "../core/clock/ServerTime";
 import {useEffect, useState} from "react";
 import {ArrowClockwise} from "../assets/symbol/svg";
+import Opcodes from "../core/background";
 
 function dateToTimeString(date: Date | null): string {
   if(!date) return "--:--:--.---";
@@ -18,14 +19,18 @@ function Clocks() {
   const [timeNowTime, setTimeNowTime] = useState<Date | null>(null);
   const [timeNowRTT, setTimeNowRTT] = useState<number>(0);
 
-  const [resetting, setResetting] = useState<boolean>(false);
+  const [resetting, setResetting] = useState<number>(0);
 
   useEffect(() => {
     resetClocks();
   }, []);
 
+  function reduceResetting() {
+    setResetting(v => Math.max(0, v-1));
+  }
+
   function resetClocks() {
-    setResetting(true);
+    setResetting(2);
 
     setTimeNowTime(null);
     setTimeNowRTT(0);
@@ -37,8 +42,15 @@ function Clocks() {
         setTimeNowTime(res.datetime);
         setTimeNowRTT(res.RTT2);
 
-        setResetting(false);
+        reduceResetting();
       });
+/*
+    chrome.runtime.sendMessage({
+      opcode: Opcodes.ESTIMATE_MS
+    }).finally(() => {
+      reduceResetting();
+    });
+ */
   }
 
   const timeNowDelta = (
@@ -49,7 +61,7 @@ function Clocks() {
     <div className="flex flex-col gap-y-2">
       <div className="flex gap-x-3 items-center">
         <p className={"text-lg font-medium"}>시각 동기화</p>
-        <button className={"cursor-pointer"} onClick={resetClocks} disabled={resetting}>
+        <button className={"cursor-pointer"} onClick={resetClocks} disabled={resetting != 0}>
           <ArrowClockwise className={"w-5 h-5 " + (resetting ? "fill-gray-400" : "fill-gray-100")} />
         </button>
       </div>

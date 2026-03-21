@@ -1,0 +1,40 @@
+name: 'Build and Deploy to GHCR'
+
+on:
+  workflow_dispatch:
+#  push:
+#  pull_request:
+#    branches:
+#      - "main"
+
+env:
+  CR_PAT: ${{ secrets.GITHUB_TOKEN }}
+  SHA: ${{ github.sha }}
+
+jobs:
+  build-publish-image:
+    name: Build and Publish Docker image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Build docker image
+        working-directory: ./idol
+        run: |
+          docker build \
+          -t ghcr.io/miho73/saikyou:$SHA \
+          --build-arg APP_COMMIT=$SHA \
+          .
+      - name: Docker login
+        run: echo $CR_PAT | docker login ghcr.io -u miho73 --password-stdin
+
+      - name: Push image
+        run: |
+          docker push ghcr.io/miho73/idol:$SHA
+          docker tag ghcr.io/miho73/idol:$SHA ghcr.io/miho73/idol:latest
+          docker push ghcr.io/miho73/idol:latest

@@ -27,7 +27,7 @@ function setChromeComPort(port: chrome.runtime.Port) {
 // 시작 / 중단 / 리셋 메시지 핸들러
 function handlePingMessage(msg: any) {
   switch (msg.opcode) {
-    case Opcodes.START_CLOCK: {
+    case Opcodes.START_PING: {
       const ok = pingSender();
       pingPort.postMessage({
         opcode: ok ? Opcodes.OK : Opcodes.ERROR,
@@ -35,7 +35,7 @@ function handlePingMessage(msg: any) {
       });
       break
     }
-    case Opcodes.STOP_CLOCK: {
+    case Opcodes.STOP_PING: {
       const ok = stopPing();
       pingPort.postMessage({
         opcode: ok ? Opcodes.OK : Opcodes.ERROR,
@@ -120,7 +120,7 @@ function pingSender(): boolean {
 
       // 결과 전송
       pingPort.postMessage({
-        opcode: Opcodes.PING,
+        opcode: Opcodes.PING_RESULT,
         data: {
           rtt: RTTs,
           stat: {
@@ -144,7 +144,7 @@ function pingSender(): boolean {
       const s = stat();
 
       pingPort.postMessage({
-        opcode: Opcodes.PING,
+        opcode: Opcodes.PING_RESULT,
         data: {
           rtt: RTTs,
           stat: {

@@ -20,8 +20,8 @@ function PingStatistics() {
   function handleMessage(message: any) {
     switch (message.opcode) {
       case Opcodes.OK: {
-        if (message.for === Opcodes.START_CLOCK) setIsPinging(true);
-        else if (message.for === Opcodes.STOP_CLOCK) setIsPinging(false);
+        if (message.for === Opcodes.START_PING) setIsPinging(true);
+        else if (message.for === Opcodes.STOP_PING) setIsPinging(false);
         else if(message.for === Opcodes.RESET) {
           setRTTs([]);
           dispatch(pingStatisticsAction.update({
@@ -36,7 +36,7 @@ function PingStatistics() {
         console.error("[CLOCK] instruction " + message.for + " has failed");
         break;
       }
-      case Opcodes.PING: {
+      case Opcodes.PING_RESULT: {
         const success = message.data.rtt.length;
         const fails = message.data.fail;
 
@@ -77,7 +77,7 @@ function PingStatistics() {
     if(!portRef.current) return;
 
     portRef.current.postMessage({
-      opcode: Opcodes.STOP_CLOCK
+      opcode: Opcodes.STOP_PING
     });
   }
 
@@ -85,7 +85,7 @@ function PingStatistics() {
     if(!portRef.current) return;
 
     portRef.current.postMessage({
-      opcode: Opcodes.START_CLOCK
+      opcode: Opcodes.START_PING
     });
   }
 
@@ -94,13 +94,16 @@ function PingStatistics() {
     portRef.current = port;
 
     port.onMessage.addListener(handleMessage);
+    /* TODO: REMOVE BEFORE DISTRIBUTE
     port.postMessage({
-      opcode: Opcodes.START_CLOCK
+      opcode: Opcodes.START_PING
     });
+
+     */
 
     return () => {
       port.postMessage({
-        opcode: Opcodes.STOP_CLOCK
+        opcode: Opcodes.STOP_PING
       });
       port.disconnect();
     }
