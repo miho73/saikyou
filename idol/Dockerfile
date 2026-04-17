@@ -1,4 +1,4 @@
-FROM python:3.14.3-alpine3.23
+FROM python:3.12.13-alpine3.23
 
 LABEL org.opencontainers.image.description="アイドル"
 
