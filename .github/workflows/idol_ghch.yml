@@ -25,6 +25,8 @@ jobs:
 
       - name: Build docker image
         working-directory: ./idol
+        env:
+          APP_COMMIT: ${{ env.SHA }}
         run: |
           docker build \
           -t ghcr.io/miho73/idol:$SHA \
