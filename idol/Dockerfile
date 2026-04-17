@@ -4,6 +4,7 @@ LABEL org.opencontainers.image.description="アイドル"
 
 WORKDIR /home/idol
 
+RUN pwd
 RUN mkdir app
 COPY app ./app
 COPY requirements.txt .
