@@ -4,10 +4,10 @@ LABEL org.opencontainers.image.description="アイドル"
 
 WORKDIR /home/idol
 
-RUN ls -al
 COPY app .
 COPY requirements.txt .
 RUN mkdir logs
+RUN ls -al
 
 RUN pip3 install --no-cache-dir --upgrade -r requirements.txt
 

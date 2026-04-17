@@ -23,6 +23,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
+      - name: Listing files
+        run: ls -la
+
       - name: Build docker image
         working-directory: ./idol
         env:
