@@ -72,9 +72,4 @@ async def solve(
       content=sol.model_dump()
     )
   except Exception as e:
-    log.error(f"Prediction cannot be made", e)
-
-    return JSONResponse(
-      status_code=400,
-      content=""
-    )
+    raise e

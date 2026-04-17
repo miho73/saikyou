@@ -32,6 +32,8 @@ async def clock():
   ntp_time_nist = nist_response.tx_time
   log.info("NIST time fetched", extra={"ntp_time_nist": ntp_time_nist})
 
+  raise Exception("dd")
+
   dt_google = datetime.fromtimestamp(ntp_time_google).astimezone()
   dt_kriss = datetime.fromtimestamp(ntp_time_kriss).astimezone()
   dt_nist = datetime.fromtimestamp(ntp_time_nist).astimezone()

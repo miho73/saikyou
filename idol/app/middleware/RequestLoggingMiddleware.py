@@ -3,6 +3,7 @@ import time
 
 from fastapi.requests import Request
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response
 
 log = logging.getLogger(__name__)
 
@@ -46,4 +47,7 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
           "latency": process_time
         }
       )
-      raise e
+
+      return Response(
+        status_code=400,
+      )
