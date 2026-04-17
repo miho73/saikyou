@@ -1,0 +1,49 @@
+import logging
+import time
+
+from fastapi.requests import Request
+from starlette.middleware.base import BaseHTTPMiddleware
+
+log = logging.getLogger(__name__)
+
+class RequestLoggingMiddleware(BaseHTTPMiddleware):
+  async def dispatch(self, request: Request, call_next):
+    start_time = time.perf_counter()
+
+    method = request.method.upper()
+    url = request.url.path
+
+    log.info(
+      f"Access: {method} {url}",
+      extra={
+        "http_method": method,
+        "http_url": url,
+      }
+    )
+
+    try:
+      response = await call_next(request)
+
+      process_time = (time.perf_counter() - start_time) * 1000
+
+      log.info(
+        f"Completed: {method} {url} - {response.status_code}",
+        extra={
+          "http_method": method,
+          "http_url": url,
+          "status_code": response.status_code,
+          "latency": process_time
+        }
+      )
+      return response
+    except Exception as e:
+      process_time = (time.perf_counter() - start_time) * 1000
+      log.error(
+        f"Failed: {method} {url} - Error: {str(e)}",
+        extra={
+          "http_method": method,
+          "http_url": url,
+          "latency": process_time
+        }
+      )
+      raise e

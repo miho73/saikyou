@@ -1,0 +1,4 @@
+mnist.npz
+*.h5
+*.keras
+*.tflite

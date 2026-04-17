@@ -1,13 +1,12 @@
 import Opcodes from "../background";
 
-async function getTimeFromTimeNow() {
+async function getTimeFromIdol() {
   const sentAt = performance.now();
 
-  const response = await fetch("https://time.now/developer/api/ip", {
+  const response = await fetch("https://idol.ionya.ooo", {
     method: "GET",
     cache: "no-store"
   });
-
 
   if (!response.ok) {
     console.error("Failed to fetch time from NTP server.");
@@ -20,9 +19,18 @@ async function getTimeFromTimeNow() {
 
   const rtt2 = Math.round((receivedAt - sentAt) / 2);
 
+  const serverTime = new Date(data["time"]);
+  const googleTime = new Date(data["google"]);
+  const krissTime = new Date(data["kriss"]);
+  const nistTime = new Date(data["nist"]);
+
   return {
-    timezone: data["abbreviation"],
-    datetime: new Date(new Date(data["datetime"]).getTime() - rtt2),
+    time: {
+      server: serverTime,
+      google: googleTime,
+      kriss: krissTime,
+      nist: nistTime,
+    },
     RTT2: rtt2
   }
 }
@@ -143,6 +151,6 @@ async function getDateHeader() {
 }
 
 export {
-  getTimeFromTimeNow,
+  getTimeFromIdol,
   estimateServerMilliseconds
 }

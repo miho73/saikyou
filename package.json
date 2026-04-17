@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "최강",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite --host --mode dev",
     "build": "vite build"
   },
   "keywords": [],
@@ -23,6 +23,8 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
     "@tailwindcss/vite": "^4.2.1",
+    "@types/axios": "^0.14.4",
+    "axios": "^1.15.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-redux": "^9.2.0",

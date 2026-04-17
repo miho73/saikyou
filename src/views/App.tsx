@@ -1,11 +1,12 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import PingStatistics from "./menu/PingStatistics";
 import TimeClock from "./TimeClock";
 import Header from "./elements/layout/Header";
 import Footer from "./elements/layout/Footer";
-import Clocks from "./Clocks";
+import Clocks from "./menu/Clocks";
 import RTTDistributionVisualizer from "./menu/RTTDistributionVisualizer";
 import TargetTimeSelector from "./menu/TargetTimeSelector";
+import CaptchaSolver from "./menu/CaptchaSolver";
 
 function App() {
   const [targetTime, setTargetTime] = useState<string>("12:00:00.000");
@@ -19,6 +20,7 @@ function App() {
       <main className={"flex flex-col gap-4 mb-3"}>
         <TimeClock/>
         <Clocks/>
+        <CaptchaSolver/>
         <PingStatistics/>
         <RTTDistributionVisualizer/>
         <TargetTimeSelector/>
