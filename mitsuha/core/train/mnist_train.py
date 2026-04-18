@@ -1,11 +1,12 @@
 import os
+from datetime import datetime
 
 import numpy as np
 from keras import models, layers
 from tensorflow.python.keras.callbacks import EarlyStopping
 
 run_path = os.getcwd()
-mnist_dset_path = run_path + '/data/mnist.npz'
+mnist_dset_path = os.path.join(run_path, 'data', 'mnist.npz')
 
 def train_mnist():
   # ==============================================
@@ -65,8 +66,9 @@ def train_mnist():
   while True:
     save = input("Save model? (y/n): ")
     if save == "y":
-      model.save('mnist.keras')
-      print("Model saved as mnist.keras")
+      date = datetime.now().strftime("%y-%m-%d")
+      model.save(os.path.join(run_path, 'data', 'mnist-{}.keras'.format(date)))
+      print("Model saved as mnist-{}.keras".format(date))
       break
     elif save == "n":
       print("Trashed")

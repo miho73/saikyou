@@ -1,17 +1,23 @@
+import os
+
 import tensorflow as tf
 
-model_path = "../../data/mnist.keras"
+run_path = os.getcwd()
 
-model = tf.keras.models.load_model(model_path)
+def conv_tflite():
+  name = input("KERAS model name: ")
+  model_path = os.path.join(run_path, 'data', name + '.keras')
 
-model.summary()
-print("==> Converting to TFLite model")
+  model = tf.keras.models.load_model(model_path)
 
-converter = tf.lite.TFLiteConverter.from_keras_model(model)
+  model.summary()
+  print("==> Converting to TFLite model")
 
-tflite_model = converter.convert()
+  converter = tf.lite.TFLiteConverter.from_keras_model(model)
 
-with open("../../data/mnist.tflite", "wb") as f:
-  f.write(tflite_model)
+  tflite_model = converter.convert()
 
-print("Done")
+  with open(os.path.join(run_path, 'data', name + '.tflite'), "wb") as f:
+    f.write(tflite_model)
+
+  print("Converted {}.keras to {}.tflite".format(name, name))

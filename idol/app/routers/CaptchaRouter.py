@@ -55,11 +55,11 @@ async def solve(
     }
   )
 
-  cdigits = digits.reshape((-1, 28, 28))
+  digits = digits.reshape((-1, 28, 28))
   record = CaptchaRecordModel(
     request_id=uuid.UUID(get_request_id()),
     original_image=request.image,
-    digit_image=[digit.tolist() for digit in cdigits],
+    digit_image=digits.tolist(),
     predicted=pred_num.tolist(),
     all_scores=prediction.tolist(),
     turnaround_time=(time.perf_counter() - t0) * 1000,

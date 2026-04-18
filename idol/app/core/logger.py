@@ -96,7 +96,7 @@ def setup_logging():
 
   engine_logger = logging.getLogger("sqlalchemy.engine")
   engine_logger.handlers = handler
-  engine_logger.setLevel(log_level)
+  engine_logger.setLevel(logging.WARNING)
 
   logger = logging.getLogger(__name__)
   logger.debug("Logging has been initialized")

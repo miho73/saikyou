@@ -1,5 +1,7 @@
 import os
 
+from core.train.actual_finetune import actual_finetune
+from core.train.conv_tflite import conv_tflite
 from core.train.data_processor import copy_record, label_record
 from core.train.mnist_train import train_mnist
 
@@ -23,9 +25,9 @@ label: Label:\t the digit image.""")
       elif command == "train_mnist":
         train_mnist()
       elif command == "train_finetune":
-        raise NotImplementedError("Not Impl. train_finetune")
+        actual_finetune()
       elif command == "conv_tflite":
-        raise NotImplementedError("Not Impl. conv_tflite")
+        conv_tflite()
       elif command == "test_mnist":
         raise NotImplementedError("Not Impl. test_mnist")
       elif command == "test_actual":

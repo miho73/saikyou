@@ -21,7 +21,7 @@ class CaptchaRecordModel(BaseTable):
   predicted: Mapped[List[int]] = Column(ARRAY(SMALLINT), nullable=False)
   all_scores: Mapped[List[List[float]]] = Column(ARRAY(FLOAT, dimensions=2), nullable=False)
   turnaround_time: Mapped[float] = Column(FLOAT, nullable=False)
-  model_tag: Mapped[str] = Column(VARCHAR(14), nullable=False)
+  model_tag: Mapped[str] = Column(VARCHAR(16), nullable=False)
   is_passed: Mapped[bool] = Column(BOOLEAN, nullable=False, server_default="false")
 
   created_at: Mapped[datetime] = Column(TIMESTAMP(timezone=True), nullable=False, server_default="now()")
