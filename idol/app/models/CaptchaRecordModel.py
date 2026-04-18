@@ -1,8 +1,10 @@
+from datetime import datetime
 from typing import List
 
-from sqlalchemy import Column
-from sqlalchemy.dialects.postgresql import ARRAY, UUID, INTEGER, FLOAT, VARCHAR
+from sqlalchemy import Column, BOOLEAN
+from sqlalchemy.dialects.postgresql import ARRAY, UUID, INTEGER, FLOAT, VARCHAR, TIMESTAMP, BOOLEAN
 from sqlalchemy.orm import Mapped
+from sqlalchemy.sql.functions import current_timestamp
 
 from app.core.database import BaseTable
 
@@ -20,3 +22,7 @@ class CaptchaRecordModel(BaseTable):
   all_scores: Mapped[List[List[float]]] = Column(ARRAY(FLOAT, dimensions=2), nullable=False)
   turnaround_time: Mapped[float] = Column(FLOAT, nullable=False)
   model_tag: Mapped[str] = Column(VARCHAR(14), nullable=False)
+  is_passed: Mapped[bool] = Column(BOOLEAN, nullable=False, server_default="false")
+
+  created_at: Mapped[datetime] = Column(TIMESTAMP(timezone=True), nullable=False, serverdefault="now()")
+  updated_at: Mapped[datetime] = Column(TIMESTAMP(timezone=True), nullable=False, serverdefault="now()", onupdate=current_timestamp())
