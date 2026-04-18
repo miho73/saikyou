@@ -3,10 +3,10 @@ import os
 import numpy as np
 import tensorflow as tf
 
-from image_predictor import preprocess
+from image_processor import preprocess
 
 test_images = "snu_numbers"
-model_path = "mnist.keras"
+model_path = "../../data/mnist.keras"
 
 if not os.path.exists(test_images):
   print(f"Directory '{test_images}' does not exist.")

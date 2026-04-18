@@ -8,7 +8,7 @@ from sqlalchemy.sql.functions import current_timestamp
 
 from uuid import UUID as PyUUID
 
-from app.core.database import BaseTable
+from core.database import BaseTable
 
 
 class CaptchaRecordModel(BaseTable):

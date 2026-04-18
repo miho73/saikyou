@@ -1,4 +1,5 @@
-mnist.npz
+data/mnist.npz
 *.h5
 *.keras
 *.tflite
+config.yml
