@@ -70,7 +70,7 @@ function CustomTooltip({ active, payload, label }: TooltipContentProps) {
   return null;
 }
 
-function RTTDistributionVisualizer() {
+function RTTDistributionVisualizer({show}: {show: boolean}) {
   const [isFolding, setIsFolding] = useState<boolean>(true);
 
   const meanRTT = useAppSelector(state => state.PingStatisticsReducer.mean);
@@ -83,6 +83,7 @@ function RTTDistributionVisualizer() {
 
   const data = useMemo(() => generateLogNormalData(meanRTT, stddevRTT, sigmaN), [meanRTT, stddevRTT, sigmaN]);
 
+  if(!show) return;
   if(meanRTT == 0 && stddevRTT == 0) {
     return (
       <div className="flex flex-col gap-y-2">
@@ -98,9 +99,9 @@ function RTTDistributionVisualizer() {
     return (
       <div className="flex flex-col gap-y-2">
         <button
-          className={"text-lg font-medium"}
+          className={"font-medium w-full text-left cursor-pointer"}
           onClick={() => setIsFolding(false)}
-        >지연시간 분포 ▶</button>
+        >지연시간 분포 ▸</button>
       </div>
     );
   }
@@ -109,9 +110,9 @@ function RTTDistributionVisualizer() {
   return (
     <div className="flex flex-col gap-y-2">
       <button
-        className={"text-lg font-medium"}
+        className={"font-medium w-full text-left cursor-pointer"}
         onClick={() => setIsFolding(true)}
-      >지연시간 분포 ▼</button>
+      >지연시간 분포 ▾</button>
 
       <div className={"outline-none"}>
         <ResponsiveContainer

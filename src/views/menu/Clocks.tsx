@@ -14,7 +14,7 @@ function dateToTimeString(date: Date | null): string {
   return `${hours}:${minutes}:${seconds}.${milliseconds}`;
 }
 
-function Clocks() {
+function Clocks({show}: {show: boolean}) {
   const [isFolding, setIsFolding] = useState<boolean>(true);
 
   const [localTime, setLocalTime] = useState<Date | null>(null);
@@ -77,14 +77,15 @@ function Clocks() {
     (nistTime && localTime) ? Math.abs(nistTime.getTime() - localTime.getTime()) : null
   );
 
+  if(!show) return;
   if(isFolding) {
     return (
       <div className="flex flex-col gap-y-2">
         <div className="flex gap-x-3 items-center">
           <button
-            className={"text-lg font-medium cursor-pointer"}
+            className={"font-medium cursor-pointer w-full text-left"}
             onClick={() => setIsFolding(false)}
-          >시각 동기화 ▶</button>
+          >시각 동기화 ▸</button>
           <button className={"cursor-pointer"} onClick={resetClocks} disabled={resetting != 0}>
             <ArrowClockwise className={"w-5 h-5 " + (resetting ? "fill-gray-400" : "fill-gray-100")} />
           </button>
@@ -97,9 +98,9 @@ function Clocks() {
     <div className="flex flex-col gap-y-2">
       <div className="flex gap-x-3 items-center">
         <button
-          className={"text-lg font-medium cursor-pointer"}
+          className={"font-medium cursor-pointer w-full text-left"}
           onClick={() => setIsFolding(true)}
-        >시각 동기화 ▼</button>
+        >시각 동기화 ▾</button>
         <button className={"cursor-pointer"} onClick={resetClocks} disabled={resetting != 0}>
           <ArrowClockwise className={"w-5 h-5 " + (resetting ? "fill-gray-400" : "fill-gray-100")} />
         </button>

@@ -23,6 +23,7 @@ def actual_finetune():
     records: List[TrainDigits] = (
       conn.query(TrainDigits)
       .filter(TrainDigits.is_verified == True)
+      .filter(TrainDigits.label != -1)
       .all()
     )
 

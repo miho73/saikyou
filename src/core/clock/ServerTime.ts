@@ -3,7 +3,7 @@ import Opcodes from "../background";
 async function getTimeFromIdol() {
   const sentAt = performance.now();
 
-  const response = await fetch("https://idol.ionya.ooo", {
+  const response = await fetch("https://idol.ionya.ooo/time", {
     method: "GET",
     cache: "no-store"
   });

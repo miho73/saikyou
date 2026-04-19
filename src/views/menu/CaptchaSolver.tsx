@@ -21,9 +21,14 @@ interface Solution {
   confidence: number;
 }
 
-function CaptchaSolver() {
+function CaptchaSolver({show}: {show: boolean}) {
+  const [isFolding, setIsFolding] = useState<boolean>(true);
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const inputRef1 = useRef<HTMLInputElement | null>(null);
+  const inputRef2 = useRef<HTMLInputElement | null>(null);
+  const inputRef3 = useRef<HTMLInputElement | null>(null);
+  const inputRef4 = useRef<HTMLInputElement | null>(null);
 
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [processResult, setProcessResult] = useState<ProcessState>();
@@ -43,7 +48,7 @@ function CaptchaSolver() {
     });
   }
 
-  function grapImage(imgElement: HTMLImageElement) {
+  function grapImage(imgElement: HTMLImageElement, at: number) {
     const canvasElement = canvasRef.current;
 
     if(!imgElement || !canvasElement) {
@@ -65,7 +70,9 @@ function CaptchaSolver() {
     setProcessResult(ProcessState.PREPROCESSING);
 
     try {
-      const ctx = canvasElement.getContext("2d");
+      const ctx = canvasElement.getContext("2d", {
+        willReadFrequently: true
+      });
       if(!ctx) {
         setProcessResult(ProcessState.CANVAS_NOT_READY);
         return;
@@ -97,8 +104,14 @@ function CaptchaSolver() {
         setSolution(res.data.solution);
         setConfidence(res.data.confidence);
 
-        if(inputRef.current)
-          inputRef.current.value = res.data.solution;
+        if(at === 1 && inputRef1.current)
+          inputRef1.current.value = res.data.solution;
+        if(at === 2 && inputRef2.current)
+          inputRef2.current.value = res.data.solution;
+        if(at === 3 && inputRef3.current)
+          inputRef3.current.value = res.data.solution;
+        if(at === 4 && inputRef4.current)
+          inputRef4.current.value = res.data.solution;
         setProcessResult(ProcessState.DONE);
       }).catch(e => {
         console.error(e);
@@ -117,7 +130,34 @@ function CaptchaSolver() {
         // @ts-ignore: id 있음
         if(mutation.target.id === "imageText_01") {
           waitImageLoading(mutation.target as HTMLImageElement)
-            .then(img => grapImage(img))
+            .then(img => grapImage(img, 1))
+            .catch(e => {
+              console.error(e);
+              setProcessResult(ProcessState.IMAGE_LOADING_FAULT);
+            });
+        }
+        // @ts-ignore: id 있음
+        if(mutation.target.id === "imageText_02") {
+          waitImageLoading(mutation.target as HTMLImageElement)
+            .then(img => grapImage(img, 2))
+            .catch(e => {
+              console.error(e);
+              setProcessResult(ProcessState.IMAGE_LOADING_FAULT);
+            });
+        }
+        // @ts-ignore: id 있음
+        if(mutation.target.id === "imageText_03") {
+          waitImageLoading(mutation.target as HTMLImageElement)
+            .then(img => grapImage(img, 3))
+            .catch(e => {
+              console.error(e);
+              setProcessResult(ProcessState.IMAGE_LOADING_FAULT);
+            });
+        }
+        // @ts-ignore: id 있음
+        if(mutation.target.id === "imageText_04") {
+          waitImageLoading(mutation.target as HTMLImageElement)
+            .then(img => grapImage(img, 4))
             .catch(e => {
               console.error(e);
               setProcessResult(ProcessState.IMAGE_LOADING_FAULT);
@@ -127,8 +167,14 @@ function CaptchaSolver() {
     });
 
     function getInputField() {
-      const input = document.getElementById("inputTextView_01");
-      if(input && input instanceof HTMLInputElement) inputRef.current = input;
+      const input1 = document.getElementById("inputTextView_01");
+      const input2 = document.getElementById("inputTextView_02");
+      const input3 = document.getElementById("inputTextView_03");
+      const input4 = document.getElementById("inputTextView_04");
+      if(input1 && input1 instanceof HTMLInputElement) inputRef1.current = input1;
+      if(input2 && input2 instanceof HTMLInputElement) inputRef2.current = input2;
+      if(input3 && input3 instanceof HTMLInputElement) inputRef3.current = input3;
+      if(input4 && input4 instanceof HTMLInputElement) inputRef4.current = input4;
     }
 
     observer.observe(
@@ -191,10 +237,19 @@ function CaptchaSolver() {
 
   return (
     <div>
-      <p className={"text-lg font-medium"}>캡챠 풀이</p>
+      {show &&
+        <>
+          {isFolding && <button className={"font-medium w-full text-left cursor-pointer"} onClick={() => setIsFolding(false)}>캡챠 풀이 ▸</button>}
+          {!isFolding && <button className={"font-medium w-full text-left cursor-pointer"} onClick={() => setIsFolding(true)}>캡챠 풀이 ▾</button>}
+        </>
+      }
       <canvas ref={canvasRef} style={{display: "none"}}/>
-      <p className={"py-2"}>예측: {solution} / 정확도: {Math.round(confidence*10000)/100}</p>
-      {state}
+      { (!isFolding && show) &&
+        <>
+          {processResult === ProcessState.DONE && <p>예측: {solution} / 정확도: {Math.round(confidence*10000)/100} / 해결</p>}
+          {processResult !== ProcessState.DONE && state}
+        </>
+      }
     </div>
   )
 }

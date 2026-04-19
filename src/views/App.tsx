@@ -9,7 +9,7 @@ import TargetTimeSelector from "./menu/TargetTimeSelector";
 import CaptchaSolver from "./menu/CaptchaSolver";
 
 function App() {
-  const [targetTime, setTargetTime] = useState<string>("12:00:00.000");
+  const [showConfig, setShowConfig] = useState<boolean>(false);
 
   return (
     <div
@@ -17,14 +17,21 @@ function App() {
     >
       <Header/>
       <hr className="my-1 border-gray-500"/>
-      <main className={"flex flex-col gap-4 mb-3"}>
-        <TimeClock/>
-        <Clocks/>
-        <CaptchaSolver/>
-        <PingStatistics/>
-        <RTTDistributionVisualizer/>
-        <TargetTimeSelector/>
+
+      <TimeClock/>
+
+      <button
+        className={"font-medium text-lg my-0.5 mt-2 py-1 cursor-pointer w-full text-left"}
+        onClick={() => setShowConfig(s => !s)}
+      >{showConfig ? "설정 ▾" : "설정 ▸"}</button>
+      <main className={"flex flex-col gap-2 mb-1 pl-1.5"}>
+        <Clocks show={showConfig}/>
+        <CaptchaSolver show={showConfig}/>
+        <PingStatistics show={showConfig}/>
+        <RTTDistributionVisualizer show={showConfig}/>
       </main>
+
+      <TargetTimeSelector/>
       <hr className="my-1 border-gray-500"/>
       <Footer/>
     </div>

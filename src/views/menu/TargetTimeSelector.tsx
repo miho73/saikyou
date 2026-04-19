@@ -24,7 +24,7 @@ function TargetTimeSelector() {
   return (
     <>
       <div className="flex flex-col gap-y-2">
-        <p className={"text-lg font-medium"}>자동 시작</p>
+        <p className={"text-lg font-medium"}>목표 시각</p>
         <input
           type="time"
           value={targetTime}

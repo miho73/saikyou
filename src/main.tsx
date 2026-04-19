@@ -11,8 +11,11 @@ fontLink.rel = 'stylesheet';
 fontLink.href = 'https://fonts.googleapis.com/css2?family=WDXL+Lubrifont+JP+N&family=Noto+Sans+JP:wght@100..900&family=Noto+Sans+KR:wght@100..900&display=swap';
 document.head.appendChild(fontLink);
 
-// enter 쿠키 삭제
-document.cookie = "enter=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+// find enter cookie
+if (document.cookie.split(';').some((item) => item.trim().startsWith('enter='))) {
+  document.cookie = "enter=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+}
+
 
 const rootElement = document.createElement('div');
 rootElement.id = 'saikyou-root';

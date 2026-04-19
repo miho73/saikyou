@@ -5,7 +5,7 @@ import Alert from "../elements/Alert";
 import {useAppDispatch, useAppSelector} from "../../core/hook/ReduxHooks";
 import {pingStatisticsAction} from "../../core/redux/PingStatisticsReducer";
 
-function PingStatistics() {
+function PingStatistics({show}: {show: boolean}) {
   const [isFolding, setIsFolding] = useState<boolean>(true);
 
   const [isPinging, setIsPinging] = useState<boolean>(false);
@@ -115,13 +115,14 @@ function PingStatistics() {
   const upper95 = Math.exp(meanRTT + 1.96 * stddevRTT);
   const lower95 = Math.exp(meanRTT - 1.96 * stddevRTT);
 
+  if(!show) return;
   if(isFolding) {
     return (
       <div>
         <button
-          className={"text-lg font-medium cursor-pointer"}
+          className={"font-medium cursor-pointer w-full text-left"}
           onClick={() => setIsFolding(false)}
-        >지연시간 통계 ▶</button>
+        >지연시간 통계 ▸</button>
       </div>
     );
   }
@@ -129,9 +130,9 @@ function PingStatistics() {
   return (
     <div>
       <button
-        className={"text-lg font-medium cursor-pointer"}
+        className={"font-medium cursor-pointer w-full text-left"}
         onClick={() => setIsFolding(true)}
-      >지연시간 통계 ▼</button>
+      >지연시간 통계 ▾</button>
       <QuartileChart
         data={RTTs}
         marker={[mu]}

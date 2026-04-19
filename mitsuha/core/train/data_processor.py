@@ -124,6 +124,9 @@ def label_record():
           last_prediction = record.label
           break
         elif x == "pass" or x == "p":
+          record.is_verified = True
+          record.label = -1
+          conn.commit()
           break
         elif x == "q" or x == "quit" or x == "exit":
           return
