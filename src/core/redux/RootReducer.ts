@@ -2,9 +2,11 @@ import { combineReducers } from "redux";
 import {configureStore} from "@reduxjs/toolkit";
 
 import PingStatisticsReducer from "./PingStatisticsReducer"
+import SharedMemoryReducer from "./SharedMemoryReducer";
 
 const rootReducer = combineReducers({
   PingStatisticsReducer,
+  SharedMemoryReducer
 });
 
 const store = configureStore({

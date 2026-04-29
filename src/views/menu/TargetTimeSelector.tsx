@@ -1,13 +1,15 @@
-import {useAppSelector} from "../../core/hook/ReduxHooks";
-import {useState} from "react";
+import {useAppDispatch, useAppSelector} from "../../core/hook/ReduxHooks";
+import {useEffect, useState} from "react";
+import {sharedMemoryAction} from "../../core/redux/SharedMemoryReducer";
 
 function TargetTimeSelector() {
   const meanRTT = useAppSelector(state => state.PingStatisticsReducer.mean);
   const stddev = useAppSelector(state => state.PingStatisticsReducer.stddev);
   const z = useAppSelector(state => state.PingStatisticsReducer.z);
+  const targetTime = useAppSelector(state => state.SharedMemoryReducer.target_time);
+  const arm = useAppSelector(state => state.SharedMemoryReducer.arm);
 
-  const [targetTime, setTargetTime] = useState<string>("");
-  const [arm, setArm] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
 
   let ok = true;
   if(
@@ -18,23 +20,27 @@ function TargetTimeSelector() {
   ) ok = false;
 
   function toggleReady() {
-    setArm(now => !now);
+    dispatch(sharedMemoryAction.updateArmState(!arm));
   }
+
+  useEffect(() => {
+    if(!ok) dispatch(sharedMemoryAction.updateArmState(false));
+  }, [ok]);
 
   return (
     <>
-      <div className="flex flex-col gap-y-2">
+      <div className="flex flex-col mb-1">
         <p className={"text-lg font-medium"}>목표 시각</p>
         <input
           type="time"
           value={targetTime}
-          onChange={(e) => setTargetTime(e.target.value)}
-          className={"px-2 py-1.5 outline-none text-lg font-semibold w-fit"}
+          onChange={(e) => dispatch(sharedMemoryAction.updateTargetTime(e.target.value))}
+          className={"px-2 py-1.5 my-1 outline-none text-lg font-semibold w-fit"}
         />
       </div>
 
       <button
-        className={"text-xl font-bold px-4 py-2 rounded cursor-pointer disabled:cursor-not-allowed transition-opacity duration-200 " + (arm ? "bg-emerald-600 disabled:bg-emerald-300 text-emerald-100" : "bg-rose-600 disabled:bg-rose-300 text-rose-100")}
+        className={"text-xl font-bold px-4 py-2 w-full rounded cursor-pointer disabled:cursor-not-allowed transition-opacity duration-200 " + (arm ? "bg-emerald-600 disabled:bg-emerald-300 text-emerald-100" : "bg-rose-600 disabled:bg-rose-300 text-rose-100")}
         disabled={!ok}
         onClick={toggleReady}
       >
