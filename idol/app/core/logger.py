@@ -1,7 +1,6 @@
 import logging
 import os
 import sys
-
 from contextvars import ContextVar
 from datetime import datetime
 from logging import Filter
@@ -10,6 +9,7 @@ from logging.handlers import TimedRotatingFileHandler
 from pythonjsonlogger.json import JsonFormatter
 
 from app.core.Config import config
+
 
 class CJsonFormatter(JsonFormatter):
   def add_fields(self, log_record, record, message_dict):
@@ -26,15 +26,19 @@ class CJsonFormatter(JsonFormatter):
 
     log_record['request_id'] = get_request_id()
 
+
 class RequestIdFilter(Filter):
   def filter(self, record):
     record.request_id = get_request_id()
     return True
 
+
 request_id_context: ContextVar[str] = ContextVar("request_id", default="")
+
 
 def get_request_id() -> str:
   return request_id_context.get()
+
 
 def setup_logging():
   log_level_str = config["log"]["level"]
@@ -66,10 +70,10 @@ def setup_logging():
   if "file" in config_handler:
     os.makedirs(os.path.dirname(log_file_path), exist_ok=True)
     f_handler = TimedRotatingFileHandler(
-        log_file_path,
-        when="midnight",
-        backupCount=10,
-      )
+      log_file_path,
+      when="midnight",
+      backupCount=10,
+    )
     f_handler.setFormatter(
       CJsonFormatter("%(timestamp)s %(level)s %(name)s %(message)s %(request_id)s %(filename)s %(lineno)d")
     )

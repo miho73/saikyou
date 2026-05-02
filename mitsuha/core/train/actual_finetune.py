@@ -3,8 +3,8 @@ from datetime import datetime
 from typing import List
 
 import numpy as np
-from sklearn.model_selection import train_test_split
 import tensorflow as tf
+from sklearn.model_selection import train_test_split
 from tensorflow.keras.optimizers import Adam
 from tensorflow.python.keras.callbacks import EarlyStopping
 
@@ -12,6 +12,7 @@ from core.database import create_connection
 from core.model.TrainDigits import TrainDigits
 
 run_path = os.getcwd()
+
 
 def actual_finetune():
   model_name = input("MNIST model to finetune: ")

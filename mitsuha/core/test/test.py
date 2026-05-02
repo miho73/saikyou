@@ -43,9 +43,10 @@ for filename in file_list:
     else:
       wa += 1
 
-    print(f"Image {filename}. Prediction: {prediction}. Confidence: {np.prod(pred_conf)*100:.2f}%[{pred_conf[0]*100:6.2f},{pred_conf[1]*100:6.2f}] Result: {"O" if correct else "X"})")
+    print(
+      f"Image {filename}. Prediction: {prediction}. Confidence: {np.prod(pred_conf) * 100:.2f}%[{pred_conf[0] * 100:6.2f},{pred_conf[1] * 100:6.2f}] Result: {"O" if correct else "X"})")
 
   except Exception as e:
     print(f"File '{file_path}' could not be processed\n", e)
 
-print("==================================================================\n%.2f%%" % (100*ac/(ac+wa)))
+print("==================================================================\n%.2f%%" % (100 * ac / (ac + wa)))

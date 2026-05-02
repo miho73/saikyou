@@ -15,6 +15,7 @@ input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 log.info("MNIST model loaded")
 
+
 def process_image(img: np.ndarray) -> np.ndarray:
   # to monochrome
   monochrome = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
@@ -61,6 +62,7 @@ def process_image(img: np.ndarray) -> np.ndarray:
     mnist_ready[0], mnist_ready[1] = mnist_ready[1], mnist_ready[0]
 
   return np.array(mnist_ready)
+
 
 def predict(img: np.ndarray):
   input_data = np.array(img, dtype=np.float32)

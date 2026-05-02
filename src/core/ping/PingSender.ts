@@ -91,13 +91,12 @@ async function doPing() {
   const beginMark = performance.now();
   const controller = new AbortController();
 
-  if(pings.length > 60) {
+  if (pings.length > 60) {
     const oldest_ping = pings.shift()!;
-    if(oldest_ping.success) {
+    if (oldest_ping.success) {
       const idx = RTTs.indexOf(oldest_ping.rtt);
-      if(idx > -1) RTTs.splice(idx, 1);
-    }
-    else {
+      if (idx > -1) RTTs.splice(idx, 1);
+    } else {
       failedPings--;
     }
   }
@@ -124,14 +123,13 @@ async function doPing() {
 
     // RTTs 배열에 RTT 삽입(분할정복 정렬)
     let left = 0, right = RTTs.length - 1;
-    while(left <= right) {
+    while (left <= right) {
       const mid = Math.floor((left + right) / 2);
 
-      if(RTTs[mid]! == rtt) {
+      if (RTTs[mid]! == rtt) {
         left = mid;
         break;
-      }
-      else if(RTTs[mid]! < rtt) left = mid + 1;
+      } else if (RTTs[mid]! < rtt) left = mid + 1;
       else right = mid - 1;
     }
     RTTs.splice(left, 0, rtt);

@@ -7,6 +7,7 @@ from starlette.responses import Response
 
 log = logging.getLogger(__name__)
 
+
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
   async def dispatch(self, request: Request, call_next):
     start_time = time.perf_counter()
@@ -14,11 +15,23 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
     method = request.method.upper()
     url = request.url.path
 
+    client_ip = (
+      request.headers.get("CF-Connecting-IP")
+      or request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+      or request.headers.get("X-Real-IP")
+      or (request.client.host if request.client else "unknown")
+    )
+    user_agent = request.headers.get("User-Agent", "")
+    principle = request.headers.get("X-Principle", "")
+
     log.info(
       f"Access: {method} {url}",
       extra={
         "http_method": method,
         "http_url": url,
+        "client_ip": client_ip,
+        "user_agent": user_agent,
+        "user_principle": principle
       }
     )
 
@@ -45,7 +58,8 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
           "http_method": method,
           "http_url": url,
           "latency": process_time
-        }
+        },
+        exc_info=e
       )
 
       return Response(

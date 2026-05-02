@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "さいきょう",
+  "name": "사이쿄",
   "version": "1.0.0",
   "description": "서울대학교 수강신청을 도와드리밍",
   "action": {
@@ -11,7 +11,7 @@
       "48": "assets/icon48.png",
       "128": "assets/icon128.png"
     },
-    "default_title": "さいきょう"
+    "default_title": "사이쿄"
   },
   "permissions": [
     "storage"

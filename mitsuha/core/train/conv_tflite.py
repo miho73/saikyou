@@ -4,6 +4,7 @@ import tensorflow as tf
 
 run_path = os.getcwd()
 
+
 def conv_tflite():
   name = input("KERAS model name: ")
   model_path = os.path.join(run_path, 'data', name + '.keras')

@@ -3,6 +3,7 @@ import numpy as np
 
 valid_extensions = ('.png', '.jpg', '.jpeg', '.bmp')
 
+
 def preprocess(image_path: str):
   if not image_path.endswith(valid_extensions):
     raise BaseException("unsupported extension: " + image_path.split(".")[-1])
@@ -30,7 +31,7 @@ def preprocess(image_path: str):
   for i, contour in enumerate(num_contours):
     # digit만 자르기
     x, y, w, h = cv2.boundingRect(contour)
-    digit_crop = binary_img[y:y+h, x:x+w]
+    digit_crop = binary_img[y:y + h, x:x + w]
 
     # 20 x 20으로 리사이즈
     side_len = max(w, h)
@@ -43,7 +44,7 @@ def preprocess(image_path: str):
     canvas = np.zeros((28, 28), dtype=np.uint8)
     sx, sy = (28 - new_w) // 2, (28 - new_h) // 2
 
-    canvas[sy:sy+new_h, sx:sx+new_w] = digit_resized / 255.0
+    canvas[sy:sy + new_h, sx:sx + new_w] = digit_resized / 255.0
     canvas_ready = canvas.reshape(28, 28, 1)
     mnist_ready.append(canvas_ready)
     begin_x.append(x)

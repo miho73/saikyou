@@ -15,6 +15,7 @@ class CaptchaSolveRequest(BaseModel):
       raise ValueError("Invalid shape")
     return v
 
+
 class CaptchaSolution(BaseModel):
   solution: str
   confidence: float

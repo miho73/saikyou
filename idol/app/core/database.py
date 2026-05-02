@@ -1,4 +1,6 @@
 from functools import reduce
+
+import redis
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -20,6 +22,13 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 BaseTable = declarative_base()
+
+redis_client = redis.Redis(
+  host=config["database"]["redis"]["host"],
+  port=config["database"]["redis"]["port"],
+  password=config["database"]["redis"]["password"],
+  decode_responses=True,
+)
 
 
 def create_connection():

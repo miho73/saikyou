@@ -8,6 +8,7 @@ from tensorflow.python.keras.callbacks import EarlyStopping
 run_path = os.getcwd()
 mnist_dset_path = os.path.join(run_path, 'data', 'mnist.npz')
 
+
 def train_mnist():
   # ==============================================
   # 데이터 로딩
@@ -16,7 +17,6 @@ def train_mnist():
   with np.load(mnist_dset_path, allow_pickle=True) as data:
     x_train, y_train = data["x_train"], data["y_train"]
     x_test, y_test = data["x_test"], data["y_test"]
-
 
   print(f"Train Size: {x_train.shape[0]}\nTest Size: {x_test.shape[0]}\n")
 

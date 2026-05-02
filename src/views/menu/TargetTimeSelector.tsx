@@ -1,5 +1,5 @@
 import {useAppDispatch, useAppSelector} from "../../core/hook/ReduxHooks";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {sharedMemoryAction} from "../../core/redux/SharedMemoryReducer";
 
 function TargetTimeSelector() {
@@ -12,7 +12,7 @@ function TargetTimeSelector() {
   const dispatch = useAppDispatch();
 
   let ok = true;
-  if(
+  if (
     meanRTT == 0 ||
     stddev == 0 ||
     z == 0 ||
@@ -24,7 +24,7 @@ function TargetTimeSelector() {
   }
 
   useEffect(() => {
-    if(!ok) dispatch(sharedMemoryAction.updateArmState(false));
+    if (!ok) dispatch(sharedMemoryAction.updateArmState(false));
   }, [ok]);
 
   return (

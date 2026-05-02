@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import PingStatistics from "./menu/PingStatistics";
 import TimeClock from "./TimeClock";
 import Header from "./elements/layout/Header";
@@ -7,6 +7,7 @@ import Clocks from "./menu/Clocks";
 import RTTDistributionVisualizer from "./menu/RTTDistributionVisualizer";
 import TargetTimeSelector from "./menu/TargetTimeSelector";
 import CaptchaSolver from "./menu/CaptchaSolver";
+import PrincipalViewer from "./menu/PrincipalViewer";
 
 function App() {
   const [showConfig, setShowConfig] = useState<boolean>(false);
@@ -29,6 +30,7 @@ function App() {
         <CaptchaSolver show={showConfig}/>
         <PingStatistics show={showConfig}/>
         <RTTDistributionVisualizer show={showConfig}/>
+        {showConfig && <PrincipalViewer/>}
       </main>
 
       <TargetTimeSelector/>

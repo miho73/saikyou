@@ -1,7 +1,14 @@
 import {useMemo, useState} from "react";
 import {
-  Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip,
-  type TooltipContentProps, XAxis, YAxis
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  type TooltipContentProps,
+  XAxis,
+  YAxis
 } from "recharts";
 import {useAppDispatch, useAppSelector} from "../../core/hook/ReduxHooks";
 import {pingStatisticsAction} from "../../core/redux/PingStatisticsReducer";
@@ -11,12 +18,12 @@ function erf(x: number) {
   const sign = x < 0 ? -1 : 1;
 
   const x2 = x * sign;
-  const a1 =  0.254829592;
+  const a1 = 0.254829592;
   const a2 = -0.284496736;
-  const a3 =  1.421413741;
+  const a3 = 1.421413741;
   const a4 = -1.453152027;
-  const a5 =  1.061405429;
-  const p  =  0.3275911;
+  const a5 = 1.061405429;
+  const p = 0.3275911;
 
   const t = 1.0 / (1.0 + p * x2);
   const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x2 * x2);
@@ -29,7 +36,7 @@ function CDF(x: number) {
 }
 
 const generateLogNormalData = (mu: number, sigma: number, n: number) => {
-  if(mu == 0 || sigma == 0) return [];
+  if (mu == 0 || sigma == 0) return [];
 
   const points = [];
   const start = Math.max(0, Math.exp(mu - 4 * sigma));
@@ -52,7 +59,7 @@ const generateLogNormalData = (mu: number, sigma: number, n: number) => {
   return points;
 };
 
-function CustomTooltip({ active, payload, label }: TooltipContentProps) {
+function CustomTooltip({active, payload, label}: TooltipContentProps) {
   const meanRTT = useAppSelector(state => state.PingStatisticsReducer.mean);
   const stddevRTT = useAppSelector(state => state.PingStatisticsReducer.stddev);
 
@@ -60,9 +67,10 @@ function CustomTooltip({ active, payload, label }: TooltipContentProps) {
     const prob = CDF((Math.log(+label) - meanRTT) / stddevRTT);
 
     return (
-      <div className={"px-2.5 py-1.5 " + (payload[0]!.dataKey == "yRight" ? "bg-emerald-800 border-emerald-900" : "bg-rose-800 border-rose-900")}>
+      <div
+        className={"px-2.5 py-1.5 " + (payload[0]!.dataKey == "yRight" ? "bg-emerald-800 border-emerald-900" : "bg-rose-800 border-rose-900")}>
         <p>{label} ms</p>
-        <p>{Math.round(prob * 10000)/100}</p>
+        <p>{Math.round(prob * 10000) / 100}</p>
       </div>
     );
   }
@@ -70,7 +78,7 @@ function CustomTooltip({ active, payload, label }: TooltipContentProps) {
   return null;
 }
 
-function RTTDistributionVisualizer({show}: {show: boolean}) {
+function RTTDistributionVisualizer({show}: { show: boolean }) {
   const [isFolding, setIsFolding] = useState<boolean>(true);
 
   const meanRTT = useAppSelector(state => state.PingStatisticsReducer.mean);
@@ -79,30 +87,32 @@ function RTTDistributionVisualizer({show}: {show: boolean}) {
   const ttime = useMemo(() => Math.exp(meanRTT - sigmaN * stddevRTT), [meanRTT, stddevRTT, sigmaN]);
   const probabilities = useMemo(() => CDF(sigmaN), [sigmaN]);
 
-  const dispatch  = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   const data = useMemo(() => generateLogNormalData(meanRTT, stddevRTT, sigmaN), [meanRTT, stddevRTT, sigmaN]);
 
-  if(!show) return;
+  if (!show) return;
 
-  if(isFolding) {
+  if (isFolding) {
     return (
       <div className="flex flex-col gap-y-2">
         <button
           className={"font-medium w-full text-left cursor-pointer"}
           onClick={() => setIsFolding(false)}
-        >지연시간 분포 ▸</button>
+        >지연시간 분포 ▸
+        </button>
       </div>
     );
   }
 
-  if(meanRTT == 0 && stddevRTT == 0) {
+  if (meanRTT == 0 && stddevRTT == 0) {
     return (
       <div className="flex flex-col gap-y-2">
         <button
           className={"font-medium w-full text-left cursor-pointer"}
           onClick={() => setIsFolding(true)}
-        >지연시간 분포 ▾</button>
+        >지연시간 분포 ▾
+        </button>
         <div className={"w-full h-10 p-1 flex flex-col items-center"}>
           <p className={"mx-auto text-lg"}>데이터가 없습니다</p>
         </div>
@@ -116,7 +126,8 @@ function RTTDistributionVisualizer({show}: {show: boolean}) {
       <button
         className={"font-medium w-full text-left cursor-pointer"}
         onClick={() => setIsFolding(true)}
-      >지연시간 분포 ▾</button>
+      >지연시간 분포 ▾
+      </button>
 
       <div className={"outline-none"}>
         <ResponsiveContainer
@@ -130,7 +141,7 @@ function RTTDistributionVisualizer({show}: {show: boolean}) {
           <AreaChart
             responsive
             data={data}
-            margin={{ top: 10, right: 10, left: 10, bottom: 30 }}
+            margin={{top: 10, right: 10, left: 10, bottom: 30}}
           >
             <CartesianGrid
               strokeDasharray={"3 3"}
@@ -195,7 +206,7 @@ function RTTDistributionVisualizer({show}: {show: boolean}) {
             />
           </AreaChart>
         </ResponsiveContainer>
-        <p>정시 전 도착 가능성: {Math.round((1-probabilities) * 1000)/10}%</p>
+        <p>정시 전 도착 가능성: {Math.round((1 - probabilities) * 1000) / 10}%</p>
       </div>
 
       <div className={"flex gap-2 items-center relative"}>

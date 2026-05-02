@@ -4,7 +4,7 @@ import {ArrowClockwise} from "../../assets/symbol/svg";
 import Opcodes from "../../core/background";
 
 function dateToTimeString(date: Date | null): string {
-  if(!date) return "--:--:--.---";
+  if (!date) return "--:--:--.---";
 
   const hours = date.getHours().toString().padStart(2, "0");
   const minutes = date.getMinutes().toString().padStart(2, "0");
@@ -14,7 +14,7 @@ function dateToTimeString(date: Date | null): string {
   return `${hours}:${minutes}:${seconds}.${milliseconds}`;
 }
 
-function Clocks({show}: {show: boolean}) {
+function Clocks({show}: { show: boolean }) {
   const [isFolding, setIsFolding] = useState<boolean>(true);
 
   const [localTime, setLocalTime] = useState<Date | null>(null);
@@ -28,7 +28,7 @@ function Clocks({show}: {show: boolean}) {
   }, []);
 
   function reduceResetting() {
-    setResetting(v => Math.max(0, v-1));
+    setResetting(v => Math.max(0, v - 1));
   }
 
   function resetClocks() {
@@ -40,7 +40,7 @@ function Clocks({show}: {show: boolean}) {
     setLocalTime(new Date());
 
     chrome.runtime.sendMessage(
-      { opcode: Opcodes.GET_TIME },
+      {opcode: Opcodes.GET_TIME},
       (response) => {
         if (response && response.opcode === Opcodes.TIME_RESULT) {
           const rtt2: number = response.RTT2;
@@ -59,17 +59,18 @@ function Clocks({show}: {show: boolean}) {
     (krissTime && localTime) ? Math.abs(krissTime.getTime() - localTime.getTime()) : null
   );
 
-  if(!show) return;
-  if(isFolding) {
+  if (!show) return;
+  if (isFolding) {
     return (
       <div className="flex flex-col gap-y-2">
         <div className="flex gap-x-3 items-center">
           <button
             className={"font-medium cursor-pointer w-full text-left"}
             onClick={() => setIsFolding(false)}
-          >시각 동기화 ▸</button>
+          >시각 동기화 ▸
+          </button>
           <button className={"cursor-pointer"} onClick={resetClocks} disabled={resetting != 0}>
-            <ArrowClockwise className={"w-5 h-5 " + (resetting ? "fill-gray-400" : "fill-gray-100")} />
+            <ArrowClockwise className={"w-5 h-5 " + (resetting ? "fill-gray-400" : "fill-gray-100")}/>
           </button>
         </div>
       </div>
@@ -82,9 +83,10 @@ function Clocks({show}: {show: boolean}) {
         <button
           className={"font-medium cursor-pointer w-full text-left"}
           onClick={() => setIsFolding(true)}
-        >시각 동기화 ▾</button>
+        >시각 동기화 ▾
+        </button>
         <button className={"cursor-pointer"} onClick={resetClocks} disabled={resetting != 0}>
-          <ArrowClockwise className={"w-5 h-5 " + (resetting ? "fill-gray-400" : "fill-gray-100")} />
+          <ArrowClockwise className={"w-5 h-5 " + (resetting ? "fill-gray-400" : "fill-gray-100")}/>
         </button>
       </div>
       <div className={"grid grid-cols-[max-content_max-content_auto] gap-x-3"}>
@@ -106,7 +108,7 @@ function Clocks({show}: {show: boolean}) {
       </div>
 
       <div className={"flex gap-x-2"}>
-        { (idolDelta && idolDelta > 500) &&
+        {(idolDelta && idolDelta > 500) &&
           <p className={"text-rose-300"}>컴퓨터 시각을 동기화하세요</p>
         }
       </div>

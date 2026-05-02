@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../core/hook/ReduxHooks";
-import SharedMemoryReducer, {sharedMemoryAction} from "../core/redux/SharedMemoryReducer";
+import {sharedMemoryAction} from "../core/redux/SharedMemoryReducer";
 
 function TimeClock() {
   const meanRTT = useAppSelector(state => state.PingStatisticsReducer.mean);
@@ -50,7 +50,7 @@ function TimeClock() {
   }, [ttime]);
 
   function autostart() {
-    if(!isArm) return;
+    if (!isArm) return;
     dispatch(sharedMemoryAction.updateArmState(false));
     document.getElementById("listtab_button_01")?.click(); //TODO: DO WHATEVER AUTOMATIC STUFF
   }
@@ -59,7 +59,7 @@ function TimeClock() {
     const timer = setInterval(() => {
       let now = new Date();
 
-      if(useCorr) {
+      if (useCorr) {
         now = new Date(now.getTime() + ttime);
       }
 
@@ -68,7 +68,7 @@ function TimeClock() {
       setS(String(now.getSeconds()).padStart(2, "0"));
       setMs(String(now.getMilliseconds()).padStart(3, "0"));
 
-      if(now.getHours() * 100 + now.getMinutes() === targetTimeUNIX) autostart();
+      if (now.getHours() * 100 + now.getMinutes() === targetTimeUNIX) autostart();
     }, 30);
 
     return () => {
@@ -87,7 +87,8 @@ function TimeClock() {
             (useCorr ? "bg-emerald-600 disabled:bg-emerald-300 text-emerald-100" : "bg-rose-600 disabled:bg-rose-300 text-rose-100")
           }
           onClick={() => setUseCorr(prev => !prev)}
-        >보정</button>
+        >보정
+        </button>
       </div>
     </div>
   );

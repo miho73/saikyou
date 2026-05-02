@@ -1,11 +1,10 @@
 import {useEffect, useRef, useState} from "react";
 import Opcodes from "../../core/background";
 import QuartileChart from "../elements/charts/QuartileChart";
-import Alert from "../elements/Alert";
 import {useAppDispatch, useAppSelector} from "../../core/hook/ReduxHooks";
 import {pingStatisticsAction} from "../../core/redux/PingStatisticsReducer";
 
-function PingStatistics({show}: {show: boolean}) {
+function PingStatistics({show}: { show: boolean }) {
   const [isFolding, setIsFolding] = useState<boolean>(true);
 
   const [isPinging, setIsPinging] = useState<boolean>(false);
@@ -24,7 +23,7 @@ function PingStatistics({show}: {show: boolean}) {
       case Opcodes.OK: {
         if (message.for === Opcodes.START_PING) setIsPinging(true);
         else if (message.for === Opcodes.STOP_PING) setIsPinging(false);
-        else if(message.for === Opcodes.RESET) {
+        else if (message.for === Opcodes.RESET) {
           setRTTs([]);
           dispatch(pingStatisticsAction.update({
             mean: 0,
@@ -43,14 +42,14 @@ function PingStatistics({show}: {show: boolean}) {
         const fails = message.data.fail;
 
         setRTTs(message.data.rtt);
-        setSuccessRate(Math.round(success * 1000 / (fails + success))/10);
+        setSuccessRate(Math.round(success * 1000 / (fails + success)) / 10);
 
         const stat: {
           mean: number;
           stddev: number;
         } = message.data.stat;
 
-        if(stat) {
+        if (stat) {
           dispatch(pingStatisticsAction.update({
             mean: stat.mean,
             stddev: stat.stddev,
@@ -61,7 +60,7 @@ function PingStatistics({show}: {show: boolean}) {
   }
 
   function resetMeasurement() {
-    if(!portRef.current) return;
+    if (!portRef.current) return;
 
     setRTTs([]);
     dispatch(pingStatisticsAction.update({
@@ -76,7 +75,7 @@ function PingStatistics({show}: {show: boolean}) {
   }
 
   function stopMeasurement() {
-    if(!portRef.current) return;
+    if (!portRef.current) return;
 
     portRef.current.postMessage({
       opcode: Opcodes.STOP_PING
@@ -84,7 +83,7 @@ function PingStatistics({show}: {show: boolean}) {
   }
 
   function beginMeasurement() {
-    if(!portRef.current) return;
+    if (!portRef.current) return;
 
     portRef.current.postMessage({
       opcode: Opcodes.START_PING
@@ -108,18 +107,19 @@ function PingStatistics({show}: {show: boolean}) {
     }
   }, []);
 
-  const mu  = Math.exp(meanRTT);
+  const mu = Math.exp(meanRTT);
   const upper95 = Math.exp(meanRTT + 1.96 * stddevRTT);
   const lower95 = Math.exp(meanRTT - 1.96 * stddevRTT);
 
-  if(!show) return;
-  if(isFolding) {
+  if (!show) return;
+  if (isFolding) {
     return (
       <div>
         <button
           className={"font-medium cursor-pointer w-full text-left"}
           onClick={() => setIsFolding(false)}
-        >지연시간 통계 ▸</button>
+        >지연시간 통계 ▸
+        </button>
       </div>
     );
   }
@@ -129,14 +129,16 @@ function PingStatistics({show}: {show: boolean}) {
       <button
         className={"font-medium cursor-pointer w-full text-left"}
         onClick={() => setIsFolding(true)}
-      >지연시간 통계 ▾</button>
+      >지연시간 통계 ▾
+      </button>
       <QuartileChart
         data={RTTs}
         marker={[mu]}
         className={"my-2"}
       />
       <div className={"flex items-center justify-between"}>
-        {successRate && <p>평균: {Math.round(mu * 100) / 100} ms, 95%: {Math.round(lower95*100)/100} / 성공률 {successRate}%</p>}
+        {successRate &&
+          <p>평균: {Math.round(mu * 100) / 100} ms, 95%: {Math.round(lower95 * 100) / 100} / 성공률 {successRate}%</p>}
         {!successRate && <p>데이터 없음</p>}
         <div className={"flex items-center justify-between gap-2"}>
           {isPinging && <button className={"px-2 py-0.5 cursor-pointer"} onClick={stopMeasurement}>측정 중단</button>}

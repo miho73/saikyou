@@ -3,6 +3,9 @@
 import setChromeComPort from "./ping/PingSender";
 import {solveCaptcha} from "./captcha/CaptchaSolver";
 import {getTimeFromIdol} from "./clock/ServerTime";
+import {getOrCreatePrinciple} from "./principle";
+
+getOrCreatePrinciple();
 
 const Opcodes = {
   // general response/request opcodes
@@ -45,22 +48,22 @@ function handleMessage(
         })
         .catch(e => {
           console.error(e);
-          sendResponse({ opcode: Opcodes.ERROR, for: message.opcode });
+          sendResponse({opcode: Opcodes.ERROR, for: message.opcode});
         });
       return true;
     case Opcodes.SOLVE_CAPTCHA:
       solveCaptcha(message.image)
         .then(solution => {
-          sendResponse({ opcode: Opcodes.CAPTCHA_SOLVED, solution: solution.solution, confidence: solution.confidence });
+          sendResponse({opcode: Opcodes.CAPTCHA_SOLVED, solution: solution.solution, confidence: solution.confidence});
         })
         .catch(e => {
           console.error(e);
-          sendResponse({ opcode: Opcodes.ERROR, for: message.opcode });
+          sendResponse({opcode: Opcodes.ERROR, for: message.opcode});
         });
       return true;
     default:
       console.error(message.opcode + " is not a valid opcode.");
-      sendResponse({ opcode: Opcodes.ERROR, for: message.opcode });
+      sendResponse({opcode: Opcodes.ERROR, for: message.opcode});
       return true;
   }
 }

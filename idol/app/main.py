@@ -6,14 +6,15 @@ from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.core.Config import mode
+from app.core.Config import mode, config
 from app.core.logger import setup_logging
 from app.middleware.RequestIDMiddleware import RequestIDMiddleware
-from app.routers import TimeRouter, CaptchaRouter
 from app.middleware.RequestLoggingMiddleware import RequestLoggingMiddleware
+from app.routers import TimeRouter, CaptchaRouter
 
 setup_logging()
 log = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -22,10 +23,11 @@ async def lifespan(app: FastAPI):
   yield
   log.info("Application ended on %s", datetime.now().isoformat())
 
+
 app = FastAPI(lifespan=lifespan)
 
 origins = [
-  "chrome-extension://jkiegilepdgkbbnlcnhkdoiblfhbhclb"
+  "chrome-extension://" + config["idol"]["extension_id"],
 ]
 
 app.add_middleware(

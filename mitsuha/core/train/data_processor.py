@@ -5,8 +5,10 @@ from core.database import create_connection
 from core.model.CaptchaRecordModel import CaptchaRecordModel
 from core.model.TrainDigits import TrainDigits
 
+
 def cls():
   os.system('cls' if os.name == 'nt' else 'clear')
+
 
 def copy_record():
   print("Connecting to database")
@@ -16,7 +18,7 @@ def copy_record():
       .filter(CaptchaRecordModel.is_passed == False)
       .count()
     )
-    print("Found {} records, {} images".format(cnt, cnt*2))
+    print("Found {} records, {} images".format(cnt, cnt * 2))
 
     print("Reading records")
     records: List[CaptchaRecordModel] = (
@@ -27,12 +29,12 @@ def copy_record():
 
     for record in records:
       td0 = TrainDigits(
-        raw_record_id = record.uid,
-        image = record.digit_image[0],
-        digit_position = False,
-        prediction = record.predicted[0],
-        score = record.all_scores[0],
-        label = record.predicted[0],
+        raw_record_id=record.uid,
+        image=record.digit_image[0],
+        digit_position=False,
+        prediction=record.predicted[0],
+        score=record.all_scores[0],
+        label=record.predicted[0],
       )
 
       td1 = TrainDigits(
@@ -59,6 +61,7 @@ def copy_record():
         break
       else:
         print("Invalid input")
+
 
 def label_record():
   print("Connecting to database")
@@ -91,7 +94,7 @@ def label_record():
 
       print("Labeling")
       print("===========================================")
-      print("{}/{} ({:.2f}%)".format(i, cnt, i*100/cnt))
+      print("{}/{} ({:.2f}%)".format(i, cnt, i * 100 / cnt))
       print("UID   ={}\nREQ_ID={}".format(record.uid, record.raw_record_id))
       print("===========================================")
       print()

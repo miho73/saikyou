@@ -1,11 +1,13 @@
-import Opcodes from "../background";
+import {getPrinciple} from "../principle";
 
 async function getTimeFromIdol() {
   const sentAt = performance.now();
 
+  const principle = getPrinciple();
   const response = await fetch("https://idol.ionya.ooo/time", {
     method: "GET",
-    cache: "no-store"
+    cache: "no-store",
+    headers: principle ? {"X-Principle": principle} : undefined
   });
 
   if (!response.ok) {

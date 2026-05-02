@@ -20,9 +20,9 @@ function next(rtt: number) {
   sq_mean += variable * variable;
 
   // max 60 variables
-  if(len >= 60) {
+  if (len >= 60) {
     const head = variables.shift();
-    if(head) {
+    if (head) {
       mean -= head;
       sq_mean -= head * head;
     }

@@ -1,12 +1,11 @@
 from datetime import datetime
 from typing import List
+from uuid import UUID as PyUUID
 
 from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import ARRAY, UUID, SMALLINT, FLOAT, VARCHAR, TIMESTAMP, BOOLEAN
 from sqlalchemy.orm import Mapped
 from sqlalchemy.sql.functions import current_timestamp
-
-from uuid import UUID as PyUUID
 
 from app.core.database import BaseTable
 
@@ -14,7 +13,8 @@ from app.core.database import BaseTable
 class CaptchaRecordModel(BaseTable):
   __tablename__ = "captcha_record"
 
-  uid: Mapped[PyUUID] = Column(UUID(as_uuid=True), primary_key=True, unique=True, nullable=False, server_default="gen_random_uuid()")
+  uid: Mapped[PyUUID] = Column(UUID(as_uuid=True), primary_key=True, unique=True, nullable=False,
+                               server_default="gen_random_uuid()")
   request_id: Mapped[PyUUID] = Column(UUID(as_uuid=True), unique=True, nullable=False)
   original_image: Mapped[List[List[int]]] = Column(ARRAY(SMALLINT, dimensions=2), nullable=False)
   digit_image: Mapped[List[List[List[int]]]] = Column(ARRAY(SMALLINT, dimensions=3), nullable=False)
@@ -25,4 +25,5 @@ class CaptchaRecordModel(BaseTable):
   is_passed: Mapped[bool] = Column(BOOLEAN, nullable=False, server_default="false")
 
   created_at: Mapped[datetime] = Column(TIMESTAMP(timezone=True), nullable=False, server_default="now()")
-  updated_at: Mapped[datetime] = Column(TIMESTAMP(timezone=True), nullable=False, server_default="now()", onupdate=current_timestamp())
+  updated_at: Mapped[datetime] = Column(TIMESTAMP(timezone=True), nullable=False, server_default="now()",
+                                        onupdate=current_timestamp())

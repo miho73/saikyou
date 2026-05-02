@@ -6,6 +6,6 @@ interface CaptchaSolution {
 }
 
 export async function solveCaptcha(image: [number, number, number][]): Promise<CaptchaSolution> {
-  const res = await api.post<CaptchaSolution>("/captcha/solve", { image });
+  const res = await api.post<CaptchaSolution>("/captcha/solve", {image});
   return res.data;
 }
