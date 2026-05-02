@@ -24,6 +24,7 @@ function TimeClock() {
   function autostart() {
     if(!isArm) return;
     dispatch(sharedMemoryAction.updateArmState(false));
+    document.getElementById("listtab_button_01")?.click();
     console.log("SSSS"); // TODO: DO WHA EVER AUTOMATED APPLICATION MUST DO
   }
 

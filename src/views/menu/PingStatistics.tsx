@@ -96,12 +96,9 @@ function PingStatistics({show}: {show: boolean}) {
     portRef.current = port;
 
     port.onMessage.addListener(handleMessage);
-    /* TODO: REMOVE BEFORE DISTRIBUTE
     port.postMessage({
       opcode: Opcodes.START_PING
     });
-
-     */
 
     return () => {
       port.postMessage({
