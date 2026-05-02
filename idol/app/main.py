@@ -25,7 +25,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 origins = [
-  "https://sugang.snu.ac.kr",
+  "chrome-extension://jkiegilepdgkbbnlcnhkdoiblfhbhclb"
 ]
 
 app.add_middleware(

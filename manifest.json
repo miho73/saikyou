@@ -32,6 +32,7 @@
       "run_at": "document_end"
     }
   ],
+  "key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4TNgTPFms2fVKNpmnXoU\nLzyVAvj37pXGAMcvnoF0buUiaQySW/v5FdnuWFAg4Hlrx/NeN6JW4dgjdtzKvLq/\nf6iIocUoUyLTLOc8PxykPOuiECHKBDqovrY96z5x9HB62Gw7ljilFjD3zeQKedo5\nf1ECwZIEVK2O6BZ+wRfkAfewEldCGPKcTQYp3bGLfmi2I0ieuE9TjqL/+OHCJr1/\nbEI74A01Fpj4XTv2ljtohuPN7eQ2Yl+07QqZ2DwZM8FS9MkEBML+PkhkFCNnilz+\nA06SmQbMPC6peYQ6N7aJtIC3vQM7Ei8Dgo+a3U2WVctyhcHIso/CjsKX7lWXIWlT\n0wIDAQAB\n-----END PUBLIC KEY-----",
   "background": {
     "service_worker": "src/core/background.ts",
     "type": "module"

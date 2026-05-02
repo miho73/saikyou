@@ -55,13 +55,6 @@ function Clocks({show}: {show: boolean}) {
       }).finally(() => {
         reduceResetting();
       });
-/*
-    chrome.runtime.sendMessage({
-      opcode: Opcodes.ESTIMATE_MS
-    }).finally(() => {
-      reduceResetting();
-    });
- */
   }
 
   const idolDelta = (

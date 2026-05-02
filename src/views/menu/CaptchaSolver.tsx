@@ -1,7 +1,7 @@
+/// <reference types="chrome"/>
 import {type ReactElement, useEffect, useRef, useState} from "react";
 import Alert from "../elements/Alert";
-import axios from "axios";
-import api from "../../core/axios";
+import Opcodes from "../../core/background";
 
 enum ProcessState {
   READY,
@@ -16,10 +16,6 @@ enum ProcessState {
   SERVER_ERROR
 }
 
-interface Solution {
-  solution: string;
-  confidence: number;
-}
 
 function CaptchaSolver({show}: {show: boolean}) {
   const [isFolding, setIsFolding] = useState<boolean>(true);
@@ -95,28 +91,23 @@ function CaptchaSolver({show}: {show: boolean}) {
       }
 
       setProcessResult(ProcessState.SUBMITTED);
-      api.post<Solution>(
-        "/captcha/solve",
-        {
-          image: rgbArray
+      chrome.runtime.sendMessage(
+        { opcode: Opcodes.SOLVE_CAPTCHA, image: rgbArray },
+        (response) => {
+          if(response && response.opcode === Opcodes.CAPTCHA_SOLVED) {
+            setSolution(response.solution);
+            setConfidence(response.confidence);
+            if(at === 1 && inputRef1.current) inputRef1.current.value = response.solution;
+            if(at === 2 && inputRef2.current) inputRef2.current.value = response.solution;
+            if(at === 3 && inputRef3.current) inputRef3.current.value = response.solution;
+            if(at === 4 && inputRef4.current) inputRef4.current.value = response.solution;
+            setProcessResult(ProcessState.DONE);
+          } else {
+            console.error(response);
+            setProcessResult(ProcessState.SERVER_ERROR);
+          }
         }
-      ).then(res => {
-        setSolution(res.data.solution);
-        setConfidence(res.data.confidence);
-
-        if(at === 1 && inputRef1.current)
-          inputRef1.current.value = res.data.solution;
-        if(at === 2 && inputRef2.current)
-          inputRef2.current.value = res.data.solution;
-        if(at === 3 && inputRef3.current)
-          inputRef3.current.value = res.data.solution;
-        if(at === 4 && inputRef4.current)
-          inputRef4.current.value = res.data.solution;
-        setProcessResult(ProcessState.DONE);
-      }).catch(e => {
-        console.error(e);
-        setProcessResult(ProcessState.SERVER_ERROR);
-      });
+      );
     } catch (e) {
 
     } finally {

@@ -35,99 +35,7 @@ async function getTimeFromIdol() {
   }
 }
 
-const tolerance = 200, vote = 7;
 const TARGET_URL = "https://google.com";
-let voteLeft = 0, voteRight = 0;
-
-function estimateServerMilliseconds(left: number = 0, right: number = 1000) {
-  if(right - left < tolerance) {
-    chrome.runtime.sendMessage({
-      opcode: Opcodes.MS_ESTIMATED,
-      date: "",
-      ms: 205
-    });
-    return;
-  }
-
-  const mid = Math.floor((left + right) / 2);
-  let t1: string | null, t2: string | null, t3: string | null;
-  let wasError = false;
-
-  const now = new Date().getMilliseconds();
-  setTimeout(() => {
-    getDateHeader()
-      .then(date => {
-        t1 = date;
-      }).catch(() => {
-        wasError = true;
-      });
-  }, 999 + left - now);
-  setTimeout(() => {
-    getDateHeader()
-      .then(date => {
-        t2 = date;
-      }).catch(() => {
-        wasError = true;
-      });
-  }, 999 + mid - now);
-  setTimeout(() => {
-    getDateHeader()
-      .then(date => {
-        t3 = date;
-
-        if(wasError)
-          throw wasError;
-        if(!t1 || !t2)
-          throw new Error("Order fault");
-
-        const s1 = +t1.substring(23, 25);
-        const s2 = +t2.substring(23, 25);
-        const s3 = +t3.substring(23, 25);
-
-        if(s1 > s2 || s2 > s3 || s1 > s3)
-          throw new Error("Order fault");
-        else if(s1 !== s2 && s1 !== s3)
-          throw new Error("Order fault");
-        else if(s1 === s2 && s2 === s3)
-          throw new Error("Undeterminable");
-
-        if(s1 < s2 && s2 === s3)
-          voteLeft++;
-        else if(s1 === s2 && s2 < s3)
-          voteRight++;
-        console.log("iteration completed", voteLeft, voteRight, left, right);
-
-        wasError = false;
-        if(voteLeft + voteRight === 7) {
-          voteLeft = 0;
-          voteRight = 0;
-          console.log("Session Completed");
-
-          if(voteLeft > voteRight) {
-            setTimeout(() => {
-              estimateServerMilliseconds(mid, right);
-            }, 1500);
-          }
-          else if(voteLeft <= voteRight) {
-            setTimeout(() => {
-              estimateServerMilliseconds(left, mid);
-            }, 1500);
-          }
-        }
-        else {
-          setTimeout(() => {
-            estimateServerMilliseconds(left, right);
-          }, 1500);
-        }
-      }).catch(e => {
-        console.error(e);
-        wasError = false;
-        setTimeout(() => {
-          estimateServerMilliseconds(left, right);
-        }, 1500);
-      });
-  }, 999 + right - now);
-}
 
 async function getDateHeader() {
   const beginMark = performance.now();
@@ -152,5 +60,4 @@ async function getDateHeader() {
 
 export {
   getTimeFromIdol,
-  estimateServerMilliseconds
 }

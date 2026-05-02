@@ -1,7 +1,7 @@
 /// <reference types="chrome"/>
 
 import setChromeComPort from "./ping/PingSender";
-import {estimateServerMilliseconds} from "./clock/ServerTime";
+import {solveCaptcha} from "./captcha/CaptchaSolver";
 
 const Opcodes = {
   // general response/request opcodes
@@ -14,12 +14,10 @@ const Opcodes = {
   STOP_PING: 0x101,
   PING_RESULT: 0x102,
 
-  // ms_estimation
-  ESTIMATE_MS: 0x110,
-  MS_ESTIMATED: 0x111,
+  // captcha
+  SOLVE_CAPTCHA: 0x120,
+  CAPTCHA_SOLVED: 0x121,
 }
-
-let estimationInProgress = false;
 
 // 전역 메시지 핸들러
 function handleMessage(
@@ -28,18 +26,20 @@ function handleMessage(
   sendResponse: (response: any) => void
 ) {
   switch (message.opcode) {
-    case Opcodes.ESTIMATE_MS:
-      sendResponse({
-        opcode: Opcodes.OK,
-        for: message.opcode
-      });
-      if(!estimationInProgress) {
-        estimationInProgress = true;
-        estimateServerMilliseconds();
-      }
-      break;
+    case Opcodes.SOLVE_CAPTCHA:
+      solveCaptcha(message.image)
+        .then(solution => {
+          sendResponse({ opcode: Opcodes.CAPTCHA_SOLVED, solution: solution.solution, confidence: solution.confidence });
+        })
+        .catch(e => {
+          console.error(e);
+          sendResponse({ opcode: Opcodes.ERROR, for: message.opcode });
+        });
+      return true;
     default:
       console.error(message.opcode + " is not a valid opcode.");
+      sendResponse({ opcode: Opcodes.ERROR, for: message.opcode });
+      return true;
   }
 }
 
