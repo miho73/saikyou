@@ -3,14 +3,14 @@ import time
 import uuid
 
 import numpy as np
-from fastapi import APIRouter
+from fastapi import APIRouter, BackgroundTasks
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 
 from app.core import CoreCaptchaSolve
 from app.core.Config import config
-from app.core.database import create_connection
+from app.core.database import SessionLocal
 from app.core.logger import get_request_id
 from app.models.CaptchaRecordModel import CaptchaRecordModel
 from app.schemas.CaptchaSolveRequest import CaptchaSolveRequest, CaptchaSolution
@@ -22,10 +22,20 @@ router = APIRouter(
   tags=["captcha"]
 )
 
+def _commit_record(record: CaptchaRecordModel):
+  with SessionLocal() as db:
+    try:
+      db.add(record)
+      db.commit()
+    except Exception as e:
+      log.error("Failed to commit captcha record", exc_info=e)
+      db.rollback()
+
+
 @router.post("/solve")
 async def solve(
   request: CaptchaSolveRequest,
-  db: Session = Depends(create_connection)
+  background_tasks: BackgroundTasks,
 ):
   pixel_array = np.array(request.image, dtype=np.uint8).reshape((26,52,3))
 
@@ -65,8 +75,7 @@ async def solve(
     turnaround_time=(time.perf_counter() - t0) * 1000,
     model_tag=config["model"]["tag"],
   )
-  db.add(record)
-  db.commit()
+  background_tasks.add_task(_commit_record, record)
 
   return JSONResponse(
     status_code=200,
