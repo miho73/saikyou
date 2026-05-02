@@ -35,7 +35,7 @@ async function getTimeFromIdol() {
   }
 }
 
-const TARGET_URL = "https://google.com";
+const TARGET_URL = import.meta.env.VITE_TARGET_URL;
 
 async function getDateHeader() {
   const beginMark = performance.now();

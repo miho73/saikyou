@@ -84,16 +84,6 @@ function RTTDistributionVisualizer({show}: {show: boolean}) {
   const data = useMemo(() => generateLogNormalData(meanRTT, stddevRTT, sigmaN), [meanRTT, stddevRTT, sigmaN]);
 
   if(!show) return;
-  if(meanRTT == 0 && stddevRTT == 0) {
-    return (
-      <div className="flex flex-col gap-y-2">
-        <p className={"text-lg font-medium"}>지연시간 분포</p>
-        <div className={"w-full h-10 p-1 flex flex-col items-center"}>
-          <p className={"mx-auto text-lg"}>데이터가 없습니다</p>
-        </div>
-      </div>
-    )
-  }
 
   if(isFolding) {
     return (
@@ -102,6 +92,20 @@ function RTTDistributionVisualizer({show}: {show: boolean}) {
           className={"font-medium w-full text-left cursor-pointer"}
           onClick={() => setIsFolding(false)}
         >지연시간 분포 ▸</button>
+      </div>
+    );
+  }
+
+  if(meanRTT == 0 && stddevRTT == 0) {
+    return (
+      <div className="flex flex-col gap-y-2">
+        <button
+          className={"font-medium w-full text-left cursor-pointer"}
+          onClick={() => setIsFolding(true)}
+        >지연시간 분포 ▾</button>
+        <div className={"w-full h-10 p-1 flex flex-col items-center"}>
+          <p className={"mx-auto text-lg"}>데이터가 없습니다</p>
+        </div>
       </div>
     );
   }

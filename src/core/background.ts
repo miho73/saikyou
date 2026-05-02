@@ -2,6 +2,7 @@
 
 import setChromeComPort from "./ping/PingSender";
 import {solveCaptcha} from "./captcha/CaptchaSolver";
+import {getTimeFromIdol} from "./clock/ServerTime";
 
 const Opcodes = {
   // general response/request opcodes
@@ -17,6 +18,10 @@ const Opcodes = {
   // captcha
   SOLVE_CAPTCHA: 0x120,
   CAPTCHA_SOLVED: 0x121,
+
+  // time sync
+  GET_TIME: 0x130,
+  TIME_RESULT: 0x131,
 }
 
 // 전역 메시지 핸들러
@@ -26,6 +31,25 @@ function handleMessage(
   sendResponse: (response: any) => void
 ) {
   switch (message.opcode) {
+    case Opcodes.GET_TIME:
+      getTimeFromIdol()
+        .then(result => {
+          sendResponse({
+            opcode: Opcodes.TIME_RESULT,
+            time: {
+              server: result.time.server.toISOString(),
+              google: result.time.google.toISOString(),
+              kriss: result.time.kriss.toISOString(),
+              nist: result.time.nist.toISOString(),
+            },
+            RTT2: result.RTT2,
+          });
+        })
+        .catch(e => {
+          console.error(e);
+          sendResponse({ opcode: Opcodes.ERROR, for: message.opcode });
+        });
+      return true;
     case Opcodes.SOLVE_CAPTCHA:
       solveCaptcha(message.image)
         .then(solution => {

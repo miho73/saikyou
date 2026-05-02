@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../core/hook/ReduxHooks";
 import SharedMemoryReducer, {sharedMemoryAction} from "../core/redux/SharedMemoryReducer";
 
@@ -19,13 +19,40 @@ function TimeClock() {
   const [ms, setMs] = useState<string>("--");
   const [useCorr, setUseCorr] = useState<boolean>(false);
 
+  const ttimeHistoryRef = useRef<number[]>([]);
+  const autoEnabledRef = useRef<boolean>(false);
+
   const dispatch = useAppDispatch();
+
+  // ttime이 안정화되면 자동으로 보정 활성화
+  useEffect(() => {
+    if (useCorr || autoEnabledRef.current || meanRTT === 0) return;
+
+    const history = ttimeHistoryRef.current;
+
+    // 새로고침 후 백그라운드에 이미 데이터가 있는 경우:
+    // 히스토리가 비어있고 meanRTT가 non-zero이면 현재 ttime으로 9개 미리 채워서
+    // 다음 ping 1개로 안정성 확인이 가능하게 함
+    if (history.length === 0) {
+      for (let i = 0; i < 9; i++) history.push(ttime);
+    }
+
+    history.push(ttime);
+    if (history.length > 10) history.shift();
+
+    if (history.length >= 10) {
+      const range = Math.max(...history) - Math.min(...history);
+      if (range < 5) {
+        setUseCorr(true);
+        autoEnabledRef.current = true;
+      }
+    }
+  }, [ttime]);
 
   function autostart() {
     if(!isArm) return;
     dispatch(sharedMemoryAction.updateArmState(false));
-    document.getElementById("listtab_button_01")?.click();
-    console.log("SSSS"); // TODO: DO WHA EVER AUTOMATED APPLICATION MUST DO
+    document.getElementById("listtab_button_01")?.click(); //TODO: DO WHATEVER AUTOMATIC STUFF
   }
 
   useEffect(() => {

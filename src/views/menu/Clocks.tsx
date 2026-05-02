@@ -1,4 +1,4 @@
-import {getTimeFromIdol} from "../../core/clock/ServerTime";
+/// <reference types="chrome"/>
 import {useEffect, useState} from "react";
 import {ArrowClockwise} from "../../assets/symbol/svg";
 import Opcodes from "../../core/background";
@@ -19,10 +19,7 @@ function Clocks({show}: {show: boolean}) {
 
   const [localTime, setLocalTime] = useState<Date | null>(null);
   const [idolTime, setIdolTime] = useState<Date | null>(null);
-  const [googleTime, setGoogleTime] = useState<Date | null>(null);
   const [krissTime, setKrissTime] = useState<Date | null>(null);
-  const [nistTime, setNistTime] = useState<Date | null>(null);
-  const [ntpRTT, setNtpRTT] = useState<number>(0);
 
   const [resetting, setResetting] = useState<number>(0);
 
@@ -38,36 +35,28 @@ function Clocks({show}: {show: boolean}) {
     setResetting(1);
 
     setIdolTime(null);
-    setGoogleTime(null);
     setKrissTime(null);
-    setNistTime(null);
-    setNtpRTT(0);
 
     setLocalTime(new Date());
 
-    getTimeFromIdol()
-      .then(res => {
-        setIdolTime(new Date(res.time.server.getTime() - res.RTT2));
-        setGoogleTime(new Date(res.time.google.getTime() - res.RTT2));
-        setKrissTime(new Date(res.time.kriss.getTime() - res.RTT2));
-        setNistTime(new Date(res.time.nist.getTime() - res.RTT2));
-        setNtpRTT(res.RTT2);
-      }).finally(() => {
+    chrome.runtime.sendMessage(
+      { opcode: Opcodes.GET_TIME },
+      (response) => {
+        if (response && response.opcode === Opcodes.TIME_RESULT) {
+          const rtt2: number = response.RTT2;
+          setIdolTime(new Date(new Date(response.time.server).getTime() - rtt2));
+          setKrissTime(new Date(new Date(response.time.kriss).getTime() - rtt2));
+        }
         reduceResetting();
-      });
+      }
+    );
   }
 
   const idolDelta = (
     (idolTime && localTime) ? Math.abs(idolTime.getTime() - localTime.getTime()) : null
   );
-  const googleDelta = (
-    (googleTime && localTime) ? Math.abs(googleTime.getTime() - localTime.getTime()) : null
-  );
   const krissDelta = (
     (krissTime && localTime) ? Math.abs(krissTime.getTime() - localTime.getTime()) : null
-  );
-  const nistDelta = (
-    (nistTime && localTime) ? Math.abs(nistTime.getTime() - localTime.getTime()) : null
   );
 
   if(!show) return;
@@ -104,20 +93,12 @@ function Clocks({show}: {show: boolean}) {
         <p>Δ = 0</p>
 
         <p>IDOL 서버</p>
-        <p>{dateToTimeString(idolTime)} (RTT={ntpRTT})</p>
+        <p>{dateToTimeString(idolTime)}</p>
         <p>Δ = {idolDelta} ms</p>
 
-        <p>Google 서버</p>
-        <p>{dateToTimeString(googleTime)} (RTT={ntpRTT})</p>
-        <p>Δ = {googleDelta} ms</p>
-
         <p>KRISS 서버</p>
-        <p>{dateToTimeString(krissTime)} (RTT={ntpRTT})</p>
+        <p>{dateToTimeString(krissTime)}</p>
         <p>Δ = {krissDelta} ms</p>
-
-        <p>NIST 서버</p>
-        <p>{dateToTimeString(nistTime)} (RTT={ntpRTT})</p>
-        <p>Δ = {nistDelta} ms</p>
 
         <p>서울대 서버</p>
         <p>--:--:--.---</p>
