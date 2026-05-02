@@ -38,9 +38,7 @@ function handleMessage(
             opcode: Opcodes.TIME_RESULT,
             time: {
               server: result.time.server.toISOString(),
-              google: result.time.google.toISOString(),
               kriss: result.time.kriss.toISOString(),
-              nist: result.time.nist.toISOString(),
             },
             RTT2: result.RTT2,
           });

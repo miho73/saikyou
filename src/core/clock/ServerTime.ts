@@ -20,16 +20,12 @@ async function getTimeFromIdol() {
   const rtt2 = Math.round((receivedAt - sentAt) / 2);
 
   const serverTime = new Date(data["time"]);
-  const googleTime = new Date(data["google"]);
   const krissTime = new Date(data["kriss"]);
-  const nistTime = new Date(data["nist"]);
 
   return {
     time: {
       server: serverTime,
-      google: googleTime,
       kriss: krissTime,
-      nist: nistTime,
     },
     RTT2: rtt2
   }

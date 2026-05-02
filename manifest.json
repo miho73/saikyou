@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "さいきょう",
   "version": "1.0.0",
-  "description": "최강",
+  "description": "서울대학교 수강신청을 도와드리밍",
   "action": {
     "default_popup": "src/popup/index.html",
     "default_icon": {
@@ -17,14 +17,12 @@
     "storage"
   ],
   "host_permissions": [
-    "*://*.sugang.snu.ac.kr/*",
-    "*://*.google.com/*"
+    "*://*.sugang.snu.ac.kr/*"
   ],
   "content_scripts": [
     {
       "matches": [
-        "*://*.sugang.snu.ac.kr/*",
-        "*://*.google.com/*"
+        "*://*.sugang.snu.ac.kr/*"
       ],
       "js": [
         "src/main.tsx"
