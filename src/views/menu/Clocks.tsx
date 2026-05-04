@@ -101,10 +101,6 @@ function Clocks({show}: { show: boolean }) {
         <p>KRISS 서버</p>
         <p>{dateToTimeString(krissTime)}</p>
         <p>Δ = {krissDelta} ms</p>
-
-        <p>서울대 서버</p>
-        <p>--:--:--.---</p>
-        <p>Δ = ?</p>
       </div>
 
       <div className={"flex gap-x-2"}>

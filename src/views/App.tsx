@@ -7,7 +7,6 @@ import Clocks from "./menu/Clocks";
 import RTTDistributionVisualizer from "./menu/RTTDistributionVisualizer";
 import TargetTimeSelector from "./menu/TargetTimeSelector";
 import CaptchaSolver from "./menu/CaptchaSolver";
-import PrincipalViewer from "./menu/PrincipalViewer";
 
 function App() {
   const [showConfig, setShowConfig] = useState<boolean>(false);
@@ -30,7 +29,10 @@ function App() {
         <CaptchaSolver show={showConfig}/>
         <PingStatistics show={showConfig}/>
         <RTTDistributionVisualizer show={showConfig}/>
-        {showConfig && <PrincipalViewer/>}
+        <div className="flex gap-2 pl-1.5">
+          {showConfig && <a href="https://idol.ionya.ooo/usage" target="_blank" rel="noreferrer" className={"cursor-pointer w-fit text-left hover:underline"}>취급 설명서 &gt;</a>}
+          {showConfig && <a href="https://idol.ionya.ooo/privacy" target="_blank" rel="noreferrer" className={"cursor-pointer w-fit text-left hover:underline"}>개인정보처리방침 &gt;</a>}
+        </div>
       </main>
 
       <TargetTimeSelector/>

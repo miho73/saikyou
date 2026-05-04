@@ -1,6 +1,7 @@
 /// <reference types="chrome"/>
 import {type ReactElement, useEffect, useRef, useState} from "react";
 import Opcodes from "../../core/background";
+import PrincipalViewer from "./PrincipalViewer";
 
 enum ProcessState {
   READY,
@@ -243,6 +244,7 @@ function CaptchaSolver({show}: { show: boolean }) {
           {processResult === ProcessState.DONE &&
             <p>예측: {solution} / 정확도: {Math.round(confidence * 10000) / 100} / 해결</p>}
           {processResult !== ProcessState.DONE && state}
+          <PrincipalViewer/>
         </>
       }
     </div>

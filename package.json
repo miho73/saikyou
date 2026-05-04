@@ -1,7 +1,7 @@
 {
   "name": "saikyou",
-  "version": "1.0.0",
-  "description": "최강",
+  "version": "1.1.0",
+  "description": "사이쿄",
   "scripts": {
     "dev": "vite --host --mode dev",
     "build": "vite build"

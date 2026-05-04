@@ -1,8 +1,15 @@
 {
   "manifest_version": 3,
   "name": "사이쿄",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "서울대학교 수강신청을 도와드리밍",
+  "icons": {
+    "16": "assets/icon16.png",
+    "32": "assets/icon32.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  },
+  "incognito": "not_allowed",
   "action": {
     "default_popup": "src/popup/index.html",
     "default_icon": {
@@ -30,7 +37,7 @@
       "run_at": "document_end"
     }
   ],
-  "key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4TNgTPFms2fVKNpmnXoU\nLzyVAvj37pXGAMcvnoF0buUiaQySW/v5FdnuWFAg4Hlrx/NeN6JW4dgjdtzKvLq/\nf6iIocUoUyLTLOc8PxykPOuiECHKBDqovrY96z5x9HB62Gw7ljilFjD3zeQKedo5\nf1ECwZIEVK2O6BZ+wRfkAfewEldCGPKcTQYp3bGLfmi2I0ieuE9TjqL/+OHCJr1/\nbEI74A01Fpj4XTv2ljtohuPN7eQ2Yl+07QqZ2DwZM8FS9MkEBML+PkhkFCNnilz+\nA06SmQbMPC6peYQ6N7aJtIC3vQM7Ei8Dgo+a3U2WVctyhcHIso/CjsKX7lWXIWlT\n0wIDAQAB\n-----END PUBLIC KEY-----",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4TNgTPFms2fVKNpmnXoULzyVAvj37pXGAMcvnoF0buUiaQySW/v5FdnuWFAg4Hlrx/NeN6JW4dgjdtzKvLq/f6iIocUoUyLTLOc8PxykPOuiECHKBDqovrY96z5x9HB62Gw7ljilFjD3zeQKedo5f1ECwZIEVK2O6BZ+wRfkAfewEldCGPKcTQYp3bGLfmi2I0ieuE9TjqL/+OHCJr1/bEI74A01Fpj4XTv2ljtohuPN7eQ2Yl+07QqZ2DwZM8FS9MkEBML+PkhkFCNnilz+A06SmQbMPC6peYQ6N7aJtIC3vQM7Ei8Dgo+a3U2WVctyhcHIso/CjsKX7lWXIWlT0wIDAQAB",
   "background": {
     "service_worker": "src/core/background.ts",
     "type": "module"
